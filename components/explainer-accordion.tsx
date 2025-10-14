@@ -21,7 +21,7 @@ export function ExplainerAccordion() {
   const [openSection, setOpenSection] = useState<Section["id"] | null>("contributions");
 
   return (
-    <section className="rounded-3xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50/50 p-8 shadow-lg dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900/50">
+    <section className="rounded-3xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50/50 p-5 shadow-lg dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900/50 sm:p-6 md:p-8">
       <div className="mb-6 text-center">
         <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
           {titleT("title")}

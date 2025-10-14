@@ -145,7 +145,7 @@ export function CalculatorCard() {
             type="button"
             onClick={() => setMode("forward")}
             className={cn(
-              "rounded-xl px-6 py-3 text-sm font-semibold transition-all",
+              "rounded-xl px-4 py-2.5 text-sm font-semibold transition-all sm:px-6 sm:py-3",
               mode === "forward"
                 ? "bg-blue-600 text-white shadow-md"
                 : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800",
@@ -157,7 +157,7 @@ export function CalculatorCard() {
             type="button"
             onClick={() => setMode("reverse")}
             className={cn(
-              "rounded-xl px-6 py-3 text-sm font-semibold transition-all",
+              "rounded-xl px-4 py-2.5 text-sm font-semibold transition-all sm:px-6 sm:py-3",
               mode === "reverse"
                 ? "bg-blue-600 text-white shadow-md"
                 : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800",
@@ -169,7 +169,7 @@ export function CalculatorCard() {
       </div>
 
       {/* Hero Input (Salary or Budget based on mode) */}
-      <div className="rounded-3xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50/50 p-8 shadow-lg dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900/50 sm:p-12">
+      <div className="rounded-3xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50/50 p-5 shadow-lg dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900/50 sm:p-8 md:p-10 lg:p-12">
         <div className="space-y-6">
           <div className="text-center">
             {mode === "forward" ? (
@@ -198,7 +198,7 @@ export function CalculatorCard() {
                   autoComplete="off"
                   disabled={useIntegral}
                   className={cn(
-                    "mt-4 w-full border-0 bg-transparent text-center text-5xl font-bold text-neutral-900 outline-none transition placeholder:text-neutral-300 focus:text-blue-600 dark:text-neutral-50 dark:placeholder:text-neutral-700 dark:focus:text-blue-400 sm:text-6xl lg:text-7xl",
+                    "mt-4 w-full border-0 bg-transparent text-center text-3xl font-bold text-neutral-900 outline-none transition placeholder:text-neutral-300 focus:text-blue-600 dark:text-neutral-50 dark:placeholder:text-neutral-700 dark:focus:text-blue-400 sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl",
                     useIntegral ? "opacity-60" : "",
                   )}
                   value={formatInputMoney(salaryInput)}
@@ -218,7 +218,7 @@ export function CalculatorCard() {
                   type="text"
                   inputMode="numeric"
                   autoComplete="off"
-                  className="mt-4 w-full border-0 bg-transparent text-center text-5xl font-bold text-neutral-900 outline-none transition placeholder:text-neutral-300 focus:text-blue-600 dark:text-neutral-50 dark:placeholder:text-neutral-700 dark:focus:text-blue-400 sm:text-6xl lg:text-7xl"
+                  className="mt-4 w-full border-0 bg-transparent text-center text-3xl font-bold text-neutral-900 outline-none transition placeholder:text-neutral-300 focus:text-blue-600 dark:text-neutral-50 dark:placeholder:text-neutral-700 dark:focus:text-blue-400 sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
                   value={formatInputMoney(budgetInput)}
                   onChange={(event) => handleBudgetChange(event.target.value)}
                   placeholder={formatInputMoney("3000000")}
@@ -239,12 +239,12 @@ export function CalculatorCard() {
 
       {/* Reverse Mode Result: Employee Salary */}
       {mode === "reverse" && isValid && (
-        <div className="rounded-3xl border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50/50 p-8 shadow-xl dark:border-green-900 dark:from-green-950/50 dark:to-emerald-950/30 sm:p-12">
+        <div className="rounded-3xl border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50/50 p-5 shadow-xl dark:border-green-900 dark:from-green-950/50 dark:to-emerald-950/30 sm:p-8 md:p-10 lg:p-12">
           <div className="text-center">
             <h2 className="text-sm font-bold uppercase tracking-wider text-green-700 dark:text-green-300">
               {calculatorT("mode.employeeSalary")}
             </h2>
-            <div className="mt-4 text-5xl font-bold text-green-900 dark:text-green-100 sm:text-6xl lg:text-7xl">
+            <div className="mt-4 text-3xl font-bold text-green-900 dark:text-green-100 sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
               {formatMoney(calculation.salaryBase)}
             </div>
             <p className="mt-4 text-base text-green-700 dark:text-green-300">
@@ -255,10 +255,10 @@ export function CalculatorCard() {
       )}
 
       {/* Total Cost Display - Out-of-Pocket vs Annualized */}
-      <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50/50 p-6 shadow-xl dark:border-blue-900 dark:from-blue-950/50 dark:to-indigo-950/30 sm:p-10">
+      <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50/50 p-4 shadow-xl dark:border-blue-900 dark:from-blue-950/50 dark:to-indigo-950/30 sm:p-6 md:p-8 lg:p-10">
         <div className="space-y-6">
           {/* Two-column comparison */}
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
             {/* Monthly Out-of-Pocket */}
             <div className="rounded-2xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50/50 p-6 dark:border-amber-800 dark:from-amber-950/30 dark:to-orange-950/20">
               <div className="flex items-start justify-between">
@@ -269,7 +269,7 @@ export function CalculatorCard() {
                   {calculatorT("costs.outOfPocket.badge")}
                 </span>
               </div>
-              <div className="mt-3 text-4xl font-bold text-amber-900 dark:text-amber-100 sm:text-5xl">
+              <div className="mt-3 text-3xl font-bold text-amber-900 dark:text-amber-100 sm:text-4xl md:text-5xl">
                 {isValid ? formatMoney(calculation.totals.monthlyOutOfPocket) : "—"}
               </div>
               <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">
@@ -287,7 +287,7 @@ export function CalculatorCard() {
                   {calculatorT("costs.annualized.badge")}
                 </span>
               </div>
-              <div className="mt-3 text-4xl font-bold text-blue-900 dark:text-blue-100 sm:text-5xl">
+              <div className="mt-3 text-3xl font-bold text-blue-900 dark:text-blue-100 sm:text-4xl md:text-5xl">
                 {isValid ? formatMoney(calculation.totals.monthly) : "—"}
               </div>
               <p className="mt-2 text-xs text-blue-700 dark:text-blue-400">
@@ -308,7 +308,7 @@ export function CalculatorCard() {
                   <p className="text-xs leading-relaxed text-amber-800 dark:text-amber-300">
                     {calculatorT("costs.warning.description")}
                   </p>
-                  <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+                  <div className="mt-3 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
                     <div className="rounded-lg bg-white/60 px-3 py-2 dark:bg-amber-950/30">
                       <span className="font-semibold text-amber-900 dark:text-amber-200">
                         {calculatorT("costs.warning.difference")}
@@ -348,7 +348,7 @@ export function CalculatorCard() {
 
       {/* Quick Context */}
       {isValid && (
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
             <dt className="text-xs font-medium uppercase tracking-wide text-neutral-500">
               {resultT("contributionBase")}
@@ -381,7 +381,7 @@ export function CalculatorCard() {
       )}
 
       {/* Advanced Settings - Collapsible */}
-      <div className="rounded-3xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900 sm:p-6">
         <button
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
@@ -455,8 +455,8 @@ export function CalculatorCard() {
       </div>
 
       {/* Breakdown Section - Color Coded */}
-      <div className="grid gap-6">
-        <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50/50 to-blue-100/30 p-6 shadow-sm dark:border-blue-900 dark:from-blue-950/30 dark:to-blue-900/20">
+      <div className="grid gap-4 sm:gap-6">
+        <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50/50 to-blue-100/30 p-4 shadow-sm dark:border-blue-900 dark:from-blue-950/30 dark:to-blue-900/20 sm:p-6">
           <h3 className="flex items-center gap-2 text-lg font-bold text-blue-900 dark:text-blue-100">
             <span className="inline-block size-3 rounded-full bg-blue-500"></span>
             {breakdownT("contributions.title")}
@@ -476,7 +476,7 @@ export function CalculatorCard() {
         </div>
 
         {!useIntegral && (
-          <div className="rounded-3xl border border-green-200 bg-gradient-to-br from-green-50/50 to-emerald-100/30 p-6 shadow-sm dark:border-green-900 dark:from-green-950/30 dark:to-emerald-900/20">
+          <div className="rounded-3xl border border-green-200 bg-gradient-to-br from-green-50/50 to-emerald-100/30 p-4 shadow-sm dark:border-green-900 dark:from-green-950/30 dark:to-emerald-900/20 sm:p-6">
             <h3 className="flex items-center gap-2 text-lg font-bold text-green-900 dark:text-green-100">
               <span className="inline-block size-3 rounded-full bg-green-500"></span>
               {breakdownT("accruals.title")}
@@ -691,8 +691,8 @@ function ColorCodedBreakdownList<T extends string>({
   const annualTotal = monthlyTotal * 12;
 
   return (
-    <div className="mt-4 overflow-x-auto">
-      <table className="w-full">
+    <div className="mt-4 -mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
+      <table className="w-full min-w-[640px]">
         <thead>
           <tr className={cn("text-xs font-semibold uppercase tracking-wide", colors.text)}>
             <th className="pb-3 pr-3 text-left">{calculatorT("table.item")}</th>
@@ -715,29 +715,29 @@ function ColorCodedBreakdownList<T extends string>({
                   colors.border,
                 )}
               >
-                <td className="rounded-l-xl border-r px-3 py-3 text-sm font-semibold border-inherit">
+                <td className="rounded-l-xl border-r px-2 py-3 text-sm font-semibold border-inherit sm:px-3">
                   {translate(id)}
                 </td>
-                <td className="border-r px-3 py-3 text-right text-sm font-bold tabular-nums border-inherit">
+                <td className="border-r px-2 py-3 text-right text-sm font-bold tabular-nums border-inherit sm:px-3">
                   {format(monthlyAmount)}
                 </td>
-                <td className="border-r px-3 py-3 text-right text-sm font-bold tabular-nums border-inherit">
+                <td className="border-r px-2 py-3 text-right text-sm font-bold tabular-nums border-inherit sm:px-3">
                   {format(annualAmount)}
                 </td>
-                <td className="rounded-r-xl px-3 py-3 text-xs">
+                <td className="rounded-r-xl px-2 py-3 text-xs sm:px-3">
                   {getPaymentFrequency(id, (key) => calculatorT(key))}
                 </td>
               </tr>
             );
           })}
           <tr className={cn("font-bold", colors.text, colors.headerBg)}>
-            <td className="rounded-l-xl px-3 py-3 text-sm uppercase tracking-wide">
+            <td className="rounded-l-xl px-2 py-3 text-sm uppercase tracking-wide sm:px-3">
               {calculatorT("table.total")}
             </td>
-            <td className="px-3 py-3 text-right text-sm tabular-nums">
+            <td className="px-2 py-3 text-right text-sm tabular-nums sm:px-3">
               {format(monthlyTotal)}
             </td>
-            <td className="px-3 py-3 text-right text-sm tabular-nums">
+            <td className="px-2 py-3 text-right text-sm tabular-nums sm:px-3">
               {format(annualTotal)}
             </td>
             <td className="rounded-r-xl"></td>
