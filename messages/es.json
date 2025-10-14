@@ -1,0 +1,127 @@
+{
+  "meta": {
+    "title": "Calculadora de costo laboral en Colombia",
+    "description": "Calcula el costo mensual y anual total de contratar en Colombia con contexto legal en tiempo real."
+  },
+  "language": {
+    "label": "Idioma",
+    "english": "English",
+    "spanish": "Español"
+  },
+  "hero": {
+    "badge": "Colombia 2025",
+    "title": "Entiende el costo real de contratar en Colombia.",
+    "subtitle": "Modela escenarios salariales, revisa los aportes obligatorios y alinea cifras con finanzas, RR. HH. y líderes."
+  },
+  "form": {
+    "title": "Datos del empleador",
+    "baseSalary": {
+      "label": "Salario base",
+      "placeholder": "4.000.000",
+      "helper": "Ingresa el salario base mensual en COP."
+    },
+    "arl": {
+      "label": "Clase de riesgo ARL",
+      "helper": "Selecciona el nivel de riesgo ocupacional del cargo.",
+      "options": {
+        "I": "Clase I – Administrativo",
+        "II": "Clase II – Operativo bajo",
+        "III": "Clase III – Operativo medio",
+        "IV": "Clase IV – Alto riesgo",
+        "V": "Clase V – Riesgo máximo"
+      }
+    },
+    "exoneration": {
+      "label": "¿Aplica exoneración Art. 114-1?",
+      "helper": "Los empleadores exonerados no pagan Salud, SENA ni ICBF si la base es menor a 10× SMMLV."
+    },
+    "smmlv": {
+      "label": "SMMLV",
+      "helper": "Valor 2025 por defecto. Actualiza si cambia el decreto.",
+      "placeholder": "1.423.500"
+    },
+    "integral": {
+      "label": "¿Usar salario integral?",
+      "badge": "Mínimo 13 × SMMLV",
+      "helper": "El salario integral incluye la mayoría de prestaciones en un 30% de factor prestacional."
+    },
+    "integralAmount": {
+      "label": "Salario integral (mensual)",
+      "placeholder": "18.500.000"
+    }
+  },
+  "results": {
+    "title": "Costo total para el empleador",
+    "monthly": "Total mensual",
+    "annual": "Total anual",
+    "transportIncluded": "Incluye auxilio de transporte porque el salario base está por debajo de 2× SMMLV.",
+    "transportExcluded": "No incluye auxilio de transporte porque supera 2× SMMLV.",
+    "exonerationApplied": "Aplica la exoneración — no se pagan Salud, SENA ni ICBF.",
+    "exonerationNotApplied": "No aplica la exoneración — todos los aportes patronales son exigibles.",
+    "contributionBase": "Base de cotización (IBC)",
+    "copy": "Copiar desglose",
+    "export": "Exportar CSV"
+  },
+  "breakdown": {
+    "contributions": {
+      "title": "Aportes del empleador",
+      "salud": "Salud (EPS)",
+      "pension": "Pensión",
+      "arl": "ARL",
+      "caja": "Caja de compensación",
+      "sena": "SENA",
+      "icbf": "ICBF"
+    },
+    "accruals": {
+      "title": "Provisiones legales",
+      "prima": "Prima legal",
+      "cesantias": "Cesantías",
+      "intereses_cesantias": "Intereses de cesantías",
+      "vacaciones": "Vacaciones"
+    },
+    "transport": "Auxilio de transporte",
+    "salary": "Salario base",
+    "integralSalary": "Salario integral",
+    "empty": "No hay elementos en esta categoría."
+  },
+  "context": {
+    "arlRate": "Tasa ARL",
+    "transport": "Auxilio de transporte",
+    "exoneration": "Estado de exoneración",
+    "exonerationApplied": "Aplica",
+    "exonerationNotApplied": "No aplica"
+  },
+  "validation": {
+    "salary-required": "Ingresa un salario base.",
+    "salary-positive": "El salario debe ser mayor que cero.",
+    "smmlv-required": "Ingresa un valor válido de SMMLV.",
+    "smmlv-positive": "El SMMLV debe ser mayor que cero.",
+    "integral-required": "Ingresa el salario integral mensual.",
+    "integral-positive": "El salario integral debe ser mayor que cero.",
+    "integral-min": "El salario integral debe ser al menos 13 × SMMLV."
+  },
+  "integral": {
+    "note": "Al activar salario integral, las prestaciones (prima, cesantías, intereses, vacaciones) se incluyen dentro del salario. Solo permanecen los aportes obligatorios."
+  },
+  "explainer": {
+    "title": "Cómo se compone el costo laboral",
+    "sections": {
+      "contributions": {
+        "title": "Aportes (pago mensual)",
+        "body": "La seguridad social patronal incluye Salud (8,5%), Pensión (12%), ARL (según riesgo), Caja (4%), SENA (2%) e ICBF (3%). Las empresas exoneradas omiten Salud, SENA e ICBF si la base es menor a 10× SMMLV."
+      },
+      "accruals": {
+        "title": "Provisiones obligatorias",
+        "body": "Las prestaciones legales se provisionan cada mes: Prima y Cesantías al 8,33% cada una sobre salario más transporte, Intereses a las cesantías al 1% y Vacaciones al 4,17% del salario."
+      },
+      "integral": {
+        "title": "Salario integral",
+        "body": "El salario integral combina el básico más un 30% de factor prestacional. Debe ser mínimo 13× SMMLV. Las prestaciones ya están incluidas, pero los aportes (Pensión, ARL, Caja y cuando aplique Salud/SENA/ICBF) siguen vigentes."
+      }
+    }
+  },
+  "footer": {
+    "disclaimer": "Esta herramienta entrega un estimado según tarifas legales. Confirma los valores finales con tu equipo de nómina o asesor contable.",
+    "contact": "¿Debes reportar una nueva tarifa? Escríbenos a finance@yourcompany.com"
+  }
+}

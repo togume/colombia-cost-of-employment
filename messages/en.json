@@ -1,0 +1,127 @@
+{
+  "meta": {
+    "title": "Colombia Employer Cost Calculator",
+    "description": "Calculate the full monthly and annual employer cost for Colombian employees with real-time legal context."
+  },
+  "language": {
+    "label": "Language",
+    "english": "English",
+    "spanish": "Español"
+  },
+  "hero": {
+    "badge": "Colombia 2025",
+    "title": "Understand the true cost of hiring in Colombia.",
+    "subtitle": "Model salary scenarios, see mandatory employer contributions, and share aligned figures with finance, HR, and leadership."
+  },
+  "form": {
+    "title": "Employer inputs",
+    "baseSalary": {
+      "label": "Base salary",
+      "placeholder": "4,000,000",
+      "helper": "Enter the monthly base salary in COP."
+    },
+    "arl": {
+      "label": "ARL risk class",
+      "helper": "Choose the occupational risk level for the role.",
+      "options": {
+        "I": "Class I – Administrative",
+        "II": "Class II – Operational low risk",
+        "III": "Class III – Operational medium risk",
+        "IV": "Class IV – High risk",
+        "V": "Class V – Maximum risk"
+      }
+    },
+    "exoneration": {
+      "label": "Art. 114-1 Exoneration applies?",
+      "helper": "Employers under exoneration do not pay Salud, SENA, or ICBF if the base is under 10× SMMLV."
+    },
+    "smmlv": {
+      "label": "SMMLV",
+      "helper": "Default 2025 value. Update if the decree changes.",
+      "placeholder": "1,423,500"
+    },
+    "integral": {
+      "label": "Use salario integral?",
+      "badge": "Minimum 13 × SMMLV",
+      "helper": "Integral salary bundles most benefits into a 30% factor prestacional."
+    },
+    "integralAmount": {
+      "label": "Integral salary (monthly)",
+      "placeholder": "18,500,000"
+    }
+  },
+  "results": {
+    "title": "Total employer cost",
+    "monthly": "Monthly total",
+    "annual": "Annual total",
+    "transportIncluded": "Auxilio de transporte is included because the base salary is under 2× SMMLV.",
+    "transportExcluded": "Auxilio de transporte is not included above 2× SMMLV.",
+    "exonerationApplied": "Exoneration applies — Salud, SENA, and ICBF employer contributions are zero.",
+    "exonerationNotApplied": "Exoneration does not apply — all employer contributions are due.",
+    "contributionBase": "Contribution base (IBC)",
+    "copy": "Copy breakdown",
+    "export": "Export CSV"
+  },
+  "breakdown": {
+    "contributions": {
+      "title": "Employer contributions",
+      "salud": "Salud (EPS)",
+      "pension": "Pensión",
+      "arl": "ARL",
+      "caja": "Caja de compensación",
+      "sena": "SENA",
+      "icbf": "ICBF"
+    },
+    "accruals": {
+      "title": "Mandatory accruals",
+      "prima": "Prima legal",
+      "cesantias": "Cesantías",
+      "intereses_cesantias": "Intereses de cesantías",
+      "vacaciones": "Vacaciones"
+    },
+    "transport": "Auxilio de transporte",
+    "salary": "Base salary",
+    "integralSalary": "Integral salary",
+    "empty": "No items in this category."
+  },
+  "context": {
+    "arlRate": "ARL rate",
+    "transport": "Auxilio de transporte",
+    "exoneration": "Exoneration status",
+    "exonerationApplied": "Applied",
+    "exonerationNotApplied": "Not applied"
+  },
+  "validation": {
+    "salary-required": "Enter a base salary.",
+    "salary-positive": "Salary must be greater than zero.",
+    "smmlv-required": "Provide a valid SMMLV amount.",
+    "smmlv-positive": "SMMLV must be greater than zero.",
+    "integral-required": "Enter the monthly integral salary.",
+    "integral-positive": "Integral salary must be greater than zero.",
+    "integral-min": "Integral salary must be at least 13 × SMMLV."
+  },
+  "integral": {
+    "note": "When salario integral is enabled, prestaciones (prima, cesantías, intereses, vacaciones) are internalised in the salary. Only statutory contributions remain."
+  },
+  "explainer": {
+    "title": "How employer costs are built",
+    "sections": {
+      "contributions": {
+        "title": "Contributions (paid monthly)",
+        "body": "Employer social security includes Salud (8.5%), Pensión (12%), ARL (risk-based), Caja (4%), SENA (2%), and ICBF (3%). Exonerated firms skip Salud, SENA, and ICBF below 10× SMMLV."
+      },
+      "accruals": {
+        "title": "Mandatory accruals",
+        "body": "Prestaciones legales accrue monthly: Prima and Cesantías at 8.33% each over salary plus transport, Intereses a las cesantías at 1%, and Vacaciones at 4.17% of salary."
+      },
+      "integral": {
+        "title": "Salario integral",
+        "body": "Integral salary combines base pay plus a 30% factor prestacional. It must be at least 13× SMMLV. Prestaciones are built in, but contributions (Pensión, ARL, Caja, Salud/SENA/ICBF when applicable) remain due."
+      }
+    }
+  },
+  "footer": {
+    "disclaimer": "This tool provides an estimate based on statutory rates. Confirm final numbers with your payroll or tax advisor.",
+    "contact": "Need to report a new rate? Email finance@yourcompany.com"
+  }
+}

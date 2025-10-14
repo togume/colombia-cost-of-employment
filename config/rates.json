@@ -1,0 +1,30 @@
+{
+  "2025": {
+    "SMMLV": 1423500,
+    "aux_transporte": 200000,
+    "contrib": {
+      "salud_employer": 0.085,
+      "pension_employer": 0.12,
+      "caja": 0.04,
+      "sena": 0.02,
+      "icbf": 0.03,
+      "arl": {
+        "I": 0.00522,
+        "II": 0.01044,
+        "III": 0.02436,
+        "IV": 0.0435,
+        "V": 0.0696
+      }
+    },
+    "accruals": {
+      "prima": 0.0833,
+      "cesantias": 0.0833,
+      "intereses_cesantias": 0.01,
+      "vacaciones": 0.0417
+    },
+    "integral": {
+      "min_smmlv": 13,
+      "factor_prestacional": 0.3
+    }
+  }
+}
