@@ -49,7 +49,7 @@ function formatInputMoney(value: string): string {
     return "";
   }
   const number = Number.parseInt(cleaned, 10);
-  return number.toLocaleString("es-CO");
+  return `$ ${number.toLocaleString("es-CO")}`;
 }
 
 export function CalculatorCard() {
@@ -221,7 +221,7 @@ export function CalculatorCard() {
                   className="mt-4 w-full border-0 bg-transparent text-center text-5xl font-bold text-neutral-900 outline-none transition placeholder:text-neutral-300 focus:text-blue-600 dark:text-neutral-50 dark:placeholder:text-neutral-700 dark:focus:text-blue-400 sm:text-6xl lg:text-7xl"
                   value={formatInputMoney(budgetInput)}
                   onChange={(event) => handleBudgetChange(event.target.value)}
-                  placeholder="3,000,000"
+                  placeholder={formatInputMoney("3000000")}
                 />
                 <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
                   {calculatorT("mode.budgetHelper")}

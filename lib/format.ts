@@ -3,13 +3,20 @@ export function formatCurrency(
   locale: string,
   options: Intl.NumberFormatOptions = {},
 ): string {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: "COP",
-    maximumFractionDigits: 0,
-    minimumFractionDigits: 0,
-    ...options,
+  const normalizedLocale = locale.startsWith("es") ? "es-CO" : "en-US";
+  const {
+    maximumFractionDigits = 0,
+    minimumFractionDigits = 0,
+    useGrouping = true,
+  } = options;
+
+  const amount = new Intl.NumberFormat(normalizedLocale, {
+    maximumFractionDigits,
+    minimumFractionDigits,
+    useGrouping,
   }).format(value);
+
+  return `$ ${amount}`;
 }
 
 export function formatPercent(

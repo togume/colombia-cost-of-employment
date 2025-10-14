@@ -17,7 +17,7 @@
     "title": "Datos del empleador",
     "baseSalary": {
       "label": "Salario base",
-      "placeholder": "4.000.000",
+      "placeholder": "$ 4.000.000",
       "helper": "Ingresa el salario base mensual en COP."
     },
     "arl": {
@@ -38,7 +38,7 @@
     "smmlv": {
       "label": "SMMLV",
       "helper": "Valor 2025 por defecto. Actualiza si cambia el decreto.",
-      "placeholder": "1.423.500"
+      "placeholder": "$ 1.423.500"
     },
     "integral": {
       "label": "¿Usar salario integral?",
@@ -47,7 +47,7 @@
     },
     "integralAmount": {
       "label": "Salario integral (mensual)",
-      "placeholder": "18.500.000"
+      "placeholder": "$ 18.500.000"
     }
   },
   "results": {

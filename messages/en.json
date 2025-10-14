@@ -17,7 +17,7 @@
     "title": "Employer inputs",
     "baseSalary": {
       "label": "Base salary",
-      "placeholder": "4,000,000",
+      "placeholder": "$ 4,000,000",
       "helper": "Enter the monthly base salary in COP."
     },
     "arl": {
@@ -38,7 +38,7 @@
     "smmlv": {
       "label": "SMMLV",
       "helper": "Default 2025 value. Update if the decree changes.",
-      "placeholder": "1,423,500"
+      "placeholder": "$ 1,423,500"
     },
     "integral": {
       "label": "Use salario integral?",
@@ -47,7 +47,7 @@
     },
     "integralAmount": {
       "label": "Integral salary (monthly)",
-      "placeholder": "18,500,000"
+      "placeholder": "$ 18,500,000"
     }
   },
   "results": {
