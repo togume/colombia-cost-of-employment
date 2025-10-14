@@ -3,6 +3,12 @@
 import { CalculatorCard } from "@/components/calculator/calculator-card";
 import { ExplainerAccordion } from "@/components/explainer-accordion";
 import { LanguageToggle } from "@/components/language-toggle";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
 import { useTranslations } from "@/hooks/use-translations";
 
 export default function Home() {
@@ -11,16 +17,24 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="relative overflow-hidden border-b border-neutral-200 bg-gradient-to-br from-white via-blue-50/30 to-yellow-50/20 py-16 backdrop-blur dark:border-neutral-800 dark:from-neutral-900 dark:via-blue-950/20 dark:to-yellow-950/10 sm:py-20">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015] dark:opacity-[0.02]"></div>
-        <div className="relative mx-auto flex max-w-7xl flex-col gap-12 px-4 sm:px-6 lg:px-8">
-          <div className="absolute right-4 top-4 sm:right-6 sm:top-6 lg:right-8 lg:top-8">
+      <header className="relative overflow-hidden border-b border-neutral-200 bg-gradient-to-br from-white via-blue-50/30 to-yellow-50/20 pb-10 pt-6 backdrop-blur dark:border-neutral-800 dark:from-neutral-900 dark:via-blue-950/20 dark:to-yellow-950/10 sm:pb-14 sm:pt-8">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015] dark:opacity-[0.02]" />
+        <div className="relative mx-auto max-w-7xl space-y-10 px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <NavigationMenu viewport={false}>
+              <NavigationMenuList className="flex items-center gap-3">
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <div className="inline-flex items-center rounded-full bg-gradient-to-r from-blue-500/10 to-yellow-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-700 ring-1 ring-blue-500/20 dark:text-blue-300 dark:ring-blue-400/30">
+                      {heroT("badge")}
+                    </div>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
             <LanguageToggle />
           </div>
-          <div className="mx-auto max-w-4xl space-y-6 text-center pt-8 sm:pt-0">
-            <span className="inline-flex items-center rounded-full bg-gradient-to-r from-blue-500/10 to-yellow-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-700 ring-1 ring-blue-500/20 dark:text-blue-300 dark:ring-blue-400/30">
-              {heroT("badge")}
-            </span>
+          <div className="mx-auto max-w-4xl space-y-4 text-center">
             <h1 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-5xl lg:text-6xl">
               {heroT("title")}
             </h1>
