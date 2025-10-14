@@ -5,12 +5,15 @@ import { useTranslations } from "@/hooks/use-translations";
 import { useLocale } from "@/hooks/use-locale";
 import {
   computeEmployerCosts,
+  computeSalaryFromBudget,
   type ContributionId,
   type AccrualId,
 } from "@/lib/calculator";
 import { DEFAULT_YEAR, getYearlyRates, type RiskClass } from "@/lib/rates";
 import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
+
+type CalculatorMode = "forward" | "reverse";
 
 const rates = getYearlyRates(DEFAULT_YEAR);
 
@@ -59,7 +62,9 @@ export function CalculatorCard() {
   const contextT = useTranslations("context");
   const { locale } = useLocale();
 
+  const [mode, setMode] = useState<CalculatorMode>("forward");
   const [salaryInput, setSalaryInput] = useState<string>(DEFAULT_SALARY);
+  const [budgetInput, setBudgetInput] = useState<string>("");
   const [smmlvInput, setSmmlvInput] = useState<string>(String(rates.SMMLV));
   const [arlClass, setArlClass] = useState<RiskClass>("I");
   const [exoneration, setExoneration] = useState(false);
@@ -67,24 +72,35 @@ export function CalculatorCard() {
   const [integralInput, setIntegralInput] = useState<string>("");
 
   const salaryValue = useMemo(() => parseMoney(salaryInput), [salaryInput]);
+  const budgetValue = useMemo(() => parseMoney(budgetInput), [budgetInput]);
   const smmlvValue = useMemo(() => parseMoney(smmlvInput), [smmlvInput]);
   const integralValue = useMemo(() => parseMoney(integralInput), [integralInput]);
 
-  const calculation = useMemo(
-    () =>
-      computeEmployerCosts(
+  const calculation = useMemo(() => {
+    if (mode === "reverse") {
+      return computeSalaryFromBudget(
         {
-          salary: salaryValue ?? Number.NaN,
+          targetMonthlyCost: budgetValue ?? Number.NaN,
           smmlv: smmlvValue ?? Number.NaN,
           arlClass,
           exoneration,
-          useIntegral,
-          integralSalary: useIntegral ? integralValue ?? Number.NaN : undefined,
         },
         rates,
-      ),
-    [salaryValue, smmlvValue, arlClass, exoneration, useIntegral, integralValue],
-  );
+      );
+    }
+
+    return computeEmployerCosts(
+      {
+        salary: salaryValue ?? Number.NaN,
+        smmlv: smmlvValue ?? Number.NaN,
+        arlClass,
+        exoneration,
+        useIntegral,
+        integralSalary: useIntegral ? integralValue ?? Number.NaN : undefined,
+      },
+      rates,
+    );
+  }, [mode, salaryValue, budgetValue, smmlvValue, arlClass, exoneration, useIntegral, integralValue]);
 
   const isValid = calculation.status === "valid";
 
@@ -106,15 +122,14 @@ export function CalculatorCard() {
 
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const percentIncrease = useMemo(() => {
-    if (!isValid || !salaryValue) return 0;
-    const increase = calculation.totals.monthly - salaryValue;
-    return (increase / salaryValue) * 100;
-  }, [isValid, salaryValue, calculation.totals.monthly]);
-
   const handleSalaryChange = (value: string) => {
     const cleaned = value.replace(/[^\d]/g, "");
     setSalaryInput(cleaned);
+  };
+
+  const handleBudgetChange = (value: string) => {
+    const cleaned = value.replace(/[^\d]/g, "");
+    setBudgetInput(cleaned);
   };
 
   const resetToMinimumWage = () => {
@@ -123,44 +138,96 @@ export function CalculatorCard() {
 
   return (
     <section className="mx-auto w-full max-w-4xl space-y-8">
-      {/* Hero Salary Input */}
+      {/* Mode Toggle */}
+      <div className="flex justify-center">
+        <div className="inline-flex rounded-2xl border border-neutral-300 bg-white p-1 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          <button
+            type="button"
+            onClick={() => setMode("forward")}
+            className={cn(
+              "rounded-xl px-6 py-3 text-sm font-semibold transition-all",
+              mode === "forward"
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800",
+            )}
+          >
+            {calculatorT("mode.forward")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("reverse")}
+            className={cn(
+              "rounded-xl px-6 py-3 text-sm font-semibold transition-all",
+              mode === "reverse"
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800",
+            )}
+          >
+            {calculatorT("mode.reverse")}
+          </button>
+        </div>
+      </div>
+
+      {/* Hero Input (Salary or Budget based on mode) */}
       <div className="rounded-3xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50/50 p-8 shadow-lg dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900/50 sm:p-12">
         <div className="space-y-6">
           <div className="text-center">
-            <div className="flex items-center justify-center gap-3">
-              <label className="block text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                {formT("baseSalary.label")}
-              </label>
-              <button
-                type="button"
-                onClick={resetToMinimumWage}
-                disabled={useIntegral}
-                className={cn(
-                  "rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 transition hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50",
-                  useIntegral ? "opacity-50 cursor-not-allowed" : "",
-                )}
-                title={calculatorT("resetButton.title")}
-                aria-label={calculatorT("resetButton.title")}
-              >
-                {calculatorT("resetButton.label")}
-              </button>
-            </div>
-            <input
-              type="text"
-              inputMode="numeric"
-              autoComplete="off"
-              disabled={useIntegral}
-              className={cn(
-                "mt-4 w-full border-0 bg-transparent text-center text-5xl font-bold text-neutral-900 outline-none transition placeholder:text-neutral-300 focus:text-blue-600 dark:text-neutral-50 dark:placeholder:text-neutral-700 dark:focus:text-blue-400 sm:text-6xl lg:text-7xl",
-                useIntegral ? "opacity-60" : "",
-              )}
-              value={formatInputMoney(salaryInput)}
-              onChange={(event) => handleSalaryChange(event.target.value)}
-              placeholder={formatInputMoney(String(rates.SMMLV))}
-            />
-            <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-              {formT("baseSalary.helper")}
-            </p>
+            {mode === "forward" ? (
+              <>
+                <div className="flex items-center justify-center gap-3">
+                  <label className="block text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                    {formT("baseSalary.label")}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={resetToMinimumWage}
+                    disabled={useIntegral}
+                    className={cn(
+                      "rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 transition hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50",
+                      useIntegral ? "opacity-50 cursor-not-allowed" : "",
+                    )}
+                    title={calculatorT("resetButton.title")}
+                    aria-label={calculatorT("resetButton.title")}
+                  >
+                    {calculatorT("resetButton.label")}
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  disabled={useIntegral}
+                  className={cn(
+                    "mt-4 w-full border-0 bg-transparent text-center text-5xl font-bold text-neutral-900 outline-none transition placeholder:text-neutral-300 focus:text-blue-600 dark:text-neutral-50 dark:placeholder:text-neutral-700 dark:focus:text-blue-400 sm:text-6xl lg:text-7xl",
+                    useIntegral ? "opacity-60" : "",
+                  )}
+                  value={formatInputMoney(salaryInput)}
+                  onChange={(event) => handleSalaryChange(event.target.value)}
+                  placeholder={formatInputMoney(String(rates.SMMLV))}
+                />
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+                  {formT("baseSalary.helper")}
+                </p>
+              </>
+            ) : (
+              <>
+                <label className="block text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                  {calculatorT("mode.budgetLabel")}
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  className="mt-4 w-full border-0 bg-transparent text-center text-5xl font-bold text-neutral-900 outline-none transition placeholder:text-neutral-300 focus:text-blue-600 dark:text-neutral-50 dark:placeholder:text-neutral-700 dark:focus:text-blue-400 sm:text-6xl lg:text-7xl"
+                  value={formatInputMoney(budgetInput)}
+                  onChange={(event) => handleBudgetChange(event.target.value)}
+                  placeholder="3,000,000"
+                />
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+                  {calculatorT("mode.budgetHelper")}
+                </p>
+              </>
+            )}
             {calculation.errors.salary && (
               <p className="mt-2 text-sm font-medium text-red-600">
                 {validationT(calculation.errors.salary)}
@@ -170,23 +237,105 @@ export function CalculatorCard() {
         </div>
       </div>
 
-      {/* Total Cost Display - Immediate & Prominent */}
-      <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50/50 p-8 shadow-xl dark:border-blue-900 dark:from-blue-950/50 dark:to-indigo-950/30 sm:p-12">
-        <div className="text-center">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300">
-            {resultT("monthly")}
-          </h2>
-          <div className="mt-4 text-5xl font-bold text-blue-900 dark:text-blue-100 sm:text-6xl lg:text-7xl">
-            {isValid ? formatMoney(calculation.totals.monthly) : "—"}
-          </div>
-          {isValid && percentIncrease > 0 && (
-            <p className="mt-4 text-lg font-medium text-blue-700 dark:text-blue-300">
-              {calculatorT("percentFromBase", {
-                percent: percentIncrease.toFixed(0),
-              })}
+      {/* Reverse Mode Result: Employee Salary */}
+      {mode === "reverse" && isValid && (
+        <div className="rounded-3xl border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50/50 p-8 shadow-xl dark:border-green-900 dark:from-green-950/50 dark:to-emerald-950/30 sm:p-12">
+          <div className="text-center">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-green-700 dark:text-green-300">
+              {calculatorT("mode.employeeSalary")}
+            </h2>
+            <div className="mt-4 text-5xl font-bold text-green-900 dark:text-green-100 sm:text-6xl lg:text-7xl">
+              {formatMoney(calculation.salaryBase)}
+            </div>
+            <p className="mt-4 text-base text-green-700 dark:text-green-300">
+              {calculatorT("mode.employeeSalaryDescription")}
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Total Cost Display - Out-of-Pocket vs Annualized */}
+      <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50/50 p-6 shadow-xl dark:border-blue-900 dark:from-blue-950/50 dark:to-indigo-950/30 sm:p-10">
+        <div className="space-y-6">
+          {/* Two-column comparison */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Monthly Out-of-Pocket */}
+            <div className="rounded-2xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50/50 p-6 dark:border-amber-800 dark:from-amber-950/30 dark:to-orange-950/20">
+              <div className="flex items-start justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                  {calculatorT("costs.outOfPocket.label")}
+                </h3>
+                <span className="rounded-full bg-amber-200 px-2 py-0.5 text-xs font-bold text-amber-900 dark:bg-amber-900/50 dark:text-amber-200">
+                  {calculatorT("costs.outOfPocket.badge")}
+                </span>
+              </div>
+              <div className="mt-3 text-4xl font-bold text-amber-900 dark:text-amber-100 sm:text-5xl">
+                {isValid ? formatMoney(calculation.totals.monthlyOutOfPocket) : "—"}
+              </div>
+              <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">
+                {calculatorT("costs.outOfPocket.description")}
+              </p>
+            </div>
+
+            {/* Monthly Annualized (True Cost) */}
+            <div className="rounded-2xl border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-indigo-50/50 p-6 dark:border-blue-800 dark:from-blue-950/40 dark:to-indigo-950/30">
+              <div className="flex items-start justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400">
+                  {calculatorT("costs.annualized.label")}
+                </h3>
+                <span className="rounded-full bg-blue-200 px-2 py-0.5 text-xs font-bold text-blue-900 dark:bg-blue-900/50 dark:text-blue-200">
+                  {calculatorT("costs.annualized.badge")}
+                </span>
+              </div>
+              <div className="mt-3 text-4xl font-bold text-blue-900 dark:text-blue-100 sm:text-5xl">
+                {isValid ? formatMoney(calculation.totals.monthly) : "—"}
+              </div>
+              <p className="mt-2 text-xs text-blue-700 dark:text-blue-400">
+                {calculatorT("costs.annualized.description")}
+              </p>
+            </div>
+          </div>
+
+          {/* Educational Warning */}
+          {isValid && !useIntegral && calculation.accruals.length > 0 && (
+            <div className="rounded-2xl border border-amber-300 bg-amber-50/50 p-4 dark:border-amber-800 dark:bg-amber-950/20">
+              <div className="flex gap-3">
+                <span className="text-2xl">⚠️</span>
+                <div className="flex-1 space-y-2">
+                  <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+                    {calculatorT("costs.warning.title")}
+                  </p>
+                  <p className="text-xs leading-relaxed text-amber-800 dark:text-amber-300">
+                    {calculatorT("costs.warning.description")}
+                  </p>
+                  <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+                    <div className="rounded-lg bg-white/60 px-3 py-2 dark:bg-amber-950/30">
+                      <span className="font-semibold text-amber-900 dark:text-amber-200">
+                        {calculatorT("costs.warning.difference")}
+                      </span>
+                      <span className="ml-2 font-bold text-amber-900 dark:text-amber-100">
+                        {formatMoney(calculation.totals.monthly - calculation.totals.monthlyOutOfPocket)}
+                      </span>
+                      <span className="ml-1 text-amber-700 dark:text-amber-400">
+                        /month
+                      </span>
+                    </div>
+                    <div className="rounded-lg bg-white/60 px-3 py-2 dark:bg-amber-950/30">
+                      <span className="font-semibold text-amber-900 dark:text-amber-200">
+                        {calculatorT("costs.warning.annual")}
+                      </span>
+                      <span className="ml-2 font-bold text-amber-900 dark:text-amber-100">
+                        {formatMoney((calculation.totals.monthly - calculation.totals.monthlyOutOfPocket) * 12)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
-          <div className="mt-6 rounded-2xl bg-white/60 px-6 py-4 backdrop-blur dark:bg-neutral-900/40">
+
+          {/* Annual Total */}
+          <div className="rounded-2xl bg-white/60 px-6 py-4 text-center backdrop-blur dark:bg-neutral-900/40">
             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-300">
               {resultT("annual")}
             </p>
@@ -483,6 +632,21 @@ function ToggleField({
   );
 }
 
+function getPaymentFrequency(id: string, translateFn: (key: string) => string): string {
+  // Contributions are monthly
+  if (["salud", "pension", "arl", "caja", "sena", "icbf"].includes(id)) {
+    return translateFn("frequency.monthly");
+  }
+
+  // Accruals have specific schedules
+  if (id === "prima") return translateFn("frequency.semiAnnual");
+  if (id === "cesantias") return translateFn("frequency.annual");
+  if (id === "intereses_cesantias") return translateFn("frequency.annual");
+  if (id === "vacaciones") return translateFn("frequency.whenTaken");
+
+  return translateFn("frequency.monthly");
+}
+
 function ColorCodedBreakdownList<T extends string>({
   ids,
   map,
@@ -500,6 +664,8 @@ function ColorCodedBreakdownList<T extends string>({
   emptyLabel: string;
   colorScheme: "blue" | "green";
 }) {
+  const calculatorT = useTranslations("calculator");
+
   if (!isValid) {
     return <p className="mt-3 text-sm text-neutral-500">{emptyLabel}</p>;
   }
@@ -509,32 +675,75 @@ function ColorCodedBreakdownList<T extends string>({
       bg: "bg-white/80 dark:bg-blue-900/20",
       text: "text-blue-900 dark:text-blue-100",
       border: "border-blue-100 dark:border-blue-900",
+      headerBg: "bg-blue-100/50 dark:bg-blue-900/30",
     },
     green: {
       bg: "bg-white/80 dark:bg-green-900/20",
       text: "text-green-900 dark:text-green-100",
       border: "border-green-100 dark:border-green-900",
+      headerBg: "bg-green-100/50 dark:bg-green-900/30",
     },
   };
 
   const colors = colorClasses[colorScheme];
 
+  const monthlyTotal = ids.reduce((sum, id) => sum + (map.get(id) ?? 0), 0);
+  const annualTotal = monthlyTotal * 12;
+
   return (
-    <ul className="mt-4 space-y-2">
-      {ids.map((id) => (
-        <li
-          key={id}
-          className={cn(
-            "flex items-center justify-between rounded-xl border px-4 py-3 text-sm font-semibold backdrop-blur transition hover:scale-[1.01]",
-            colors.bg,
-            colors.text,
-            colors.border,
-          )}
-        >
-          <span>{translate(id)}</span>
-          <span className="font-bold">{format(map.get(id) ?? 0)}</span>
-        </li>
-      ))}
-    </ul>
+    <div className="mt-4 overflow-x-auto">
+      <table className="w-full">
+        <thead>
+          <tr className={cn("text-xs font-semibold uppercase tracking-wide", colors.text)}>
+            <th className="pb-3 pr-3 text-left">{calculatorT("table.item")}</th>
+            <th className="px-3 pb-3 text-right">{calculatorT("table.monthly")}</th>
+            <th className="px-3 pb-3 text-right">{calculatorT("table.annual")}</th>
+            <th className="pl-3 pb-3 text-left">{calculatorT("table.frequency")}</th>
+          </tr>
+        </thead>
+        <tbody className="space-y-2">
+          {ids.map((id) => {
+            const monthlyAmount = map.get(id) ?? 0;
+            const annualAmount = monthlyAmount * 12;
+            return (
+              <tr
+                key={id}
+                className={cn(
+                  "rounded-xl border backdrop-blur transition hover:scale-[1.01]",
+                  colors.bg,
+                  colors.text,
+                  colors.border,
+                )}
+              >
+                <td className="rounded-l-xl border-r px-3 py-3 text-sm font-semibold border-inherit">
+                  {translate(id)}
+                </td>
+                <td className="border-r px-3 py-3 text-right text-sm font-bold tabular-nums border-inherit">
+                  {format(monthlyAmount)}
+                </td>
+                <td className="border-r px-3 py-3 text-right text-sm font-bold tabular-nums border-inherit">
+                  {format(annualAmount)}
+                </td>
+                <td className="rounded-r-xl px-3 py-3 text-xs">
+                  {getPaymentFrequency(id, (key) => calculatorT(key))}
+                </td>
+              </tr>
+            );
+          })}
+          <tr className={cn("font-bold", colors.text, colors.headerBg)}>
+            <td className="rounded-l-xl px-3 py-3 text-sm uppercase tracking-wide">
+              {calculatorT("table.total")}
+            </td>
+            <td className="px-3 py-3 text-right text-sm tabular-nums">
+              {format(monthlyTotal)}
+            </td>
+            <td className="px-3 py-3 text-right text-sm tabular-nums">
+              {format(annualTotal)}
+            </td>
+            <td className="rounded-r-xl"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
 }

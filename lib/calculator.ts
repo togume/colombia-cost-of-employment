@@ -25,6 +25,13 @@ export interface CalculatorInput {
   integralSalary?: number;
 }
 
+export interface BudgetCalculatorInput {
+  targetMonthlyCost: number;
+  smmlv: number;
+  arlClass: RiskClass;
+  exoneration: boolean;
+}
+
 export type FieldErrorCode =
   | "salary-required"
   | "salary-positive"
@@ -55,6 +62,7 @@ export interface CalculationResult {
   contributions: BreakdownItem[];
   accruals: BreakdownItem[];
   totals: {
+    monthlyOutOfPocket: number;
     monthly: number;
     annual: number;
   };
@@ -102,6 +110,7 @@ export function computeEmployerCosts(
       contributions: [],
       accruals: [],
       totals: {
+        monthlyOutOfPocket: 0,
         monthly: 0,
         annual: 0,
       },
@@ -183,7 +192,8 @@ export function computeEmployerCosts(
   const contributionsTotal = contributions.reduce((sum, item) => sum + item.amount, 0);
   const accrualsTotal = accruals.reduce((sum, item) => sum + item.amount, 0);
 
-  const monthlyTotal = salary + transportEligible + contributionsTotal + accrualsTotal;
+  const monthlyOutOfPocket = salary + transportEligible + contributionsTotal;
+  const monthlyTotal = monthlyOutOfPocket + accrualsTotal;
   const annualTotal = monthlyTotal * 12;
 
   return {
@@ -192,6 +202,7 @@ export function computeEmployerCosts(
     contributions,
     accruals,
     totals: {
+      monthlyOutOfPocket,
       monthly: monthlyTotal,
       annual: annualTotal,
     },
@@ -202,6 +213,178 @@ export function computeEmployerCosts(
       transportAmount: transportEligible,
       arlRate: rates.contrib.arl[input.arlClass],
       contributionBase,
+    },
+  };
+}
+
+/**
+ * Reverse calculation: compute salary from a target monthly budget
+ */
+export function computeSalaryFromBudget(
+  input: BudgetCalculatorInput,
+  rates: YearlyRates,
+): CalculationResult {
+  const errors: FieldErrorMap = {};
+
+  if (!Number.isFinite(input.targetMonthlyCost) || input.targetMonthlyCost <= 0) {
+    errors.salary = "salary-required";
+  }
+
+  if (!Number.isFinite(input.smmlv) || input.smmlv <= 0) {
+    errors.smmlv = "smmlv-required";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return {
+      status: "invalid",
+      errors,
+      contributions: [],
+      accruals: [],
+      totals: {
+        monthlyOutOfPocket: 0,
+        monthly: 0,
+        annual: 0,
+      },
+      salaryBase: 0,
+      context: {
+        exonerationApplied: false,
+        transportIncluded: false,
+        transportAmount: 0,
+        arlRate: 0,
+        contributionBase: 0,
+      },
+    };
+  }
+
+  const arlRate = rates.contrib.arl[input.arlClass];
+  const transportAmount = rates.aux_transporte;
+
+  const contribRateWithoutExoneration =
+    rates.contrib.salud_employer +
+    rates.contrib.pension_employer +
+    rates.contrib.caja +
+    rates.contrib.sena +
+    rates.contrib.icbf +
+    arlRate;
+
+  const contribRateWithExoneration =
+    rates.contrib.pension_employer + rates.contrib.caja + arlRate;
+
+  const accrualSalaryRate =
+    rates.accruals.prima +
+    rates.accruals.cesantias +
+    rates.accruals.intereses_cesantias +
+    rates.accruals.vacaciones;
+
+  const accrualTransportRate =
+    rates.accruals.prima +
+    rates.accruals.cesantias +
+    rates.accruals.intereses_cesantias;
+
+  type CandidateSolution = {
+    salary: number;
+  };
+
+  const candidates: CandidateSolution[] = [];
+
+  const addCandidate = (salary: number) => {
+    if (!Number.isFinite(salary) || salary <= 0) {
+      return;
+    }
+    candidates.push({ salary });
+  };
+
+  // Case 1: Salary qualifies for transport (salary ≤ 2×SMMLV)
+  if (transportAmount > 0) {
+    const contribRate =
+      input.exoneration ? contribRateWithExoneration : contribRateWithoutExoneration;
+    const denominator = 1 + contribRate + accrualSalaryRate;
+    const numerator = input.targetMonthlyCost - transportAmount * (1 + accrualTransportRate);
+
+    if (denominator > 0) {
+      const salaryWithTransport = numerator / denominator;
+      if (salaryWithTransport > 0 && salaryWithTransport <= 2 * input.smmlv) {
+        addCandidate(salaryWithTransport);
+      }
+    }
+  }
+
+  // Case 2: Salary between transport threshold and exoneration threshold (if exoneration applies)
+  if (input.exoneration) {
+    const denominator = 1 + contribRateWithExoneration + accrualSalaryRate;
+    if (denominator > 0) {
+      const salaryWithExoneration = input.targetMonthlyCost / denominator;
+      if (
+        salaryWithExoneration > 2 * input.smmlv &&
+        salaryWithExoneration < 10 * input.smmlv
+      ) {
+        addCandidate(salaryWithExoneration);
+      }
+    }
+  }
+
+  // Case 3: Salary above exoneration threshold OR exoneration disabled
+  {
+    const denominator = 1 + contribRateWithoutExoneration + accrualSalaryRate;
+    if (denominator > 0) {
+      const salaryWithoutExoneration = input.targetMonthlyCost / denominator;
+      const lowerBound = input.exoneration ? 10 * input.smmlv : 0;
+      if (salaryWithoutExoneration >= Math.max(2 * input.smmlv, lowerBound)) {
+        addCandidate(salaryWithoutExoneration);
+      }
+    }
+  }
+
+  const evaluatedCandidates = candidates
+    .map((candidate) => {
+      const forwardResult = computeEmployerCosts(
+        {
+          salary: candidate.salary,
+          smmlv: input.smmlv,
+          arlClass: input.arlClass,
+          exoneration: input.exoneration,
+          useIntegral: false,
+          integralSalary: undefined,
+        },
+        rates,
+      );
+
+      if (forwardResult.status !== "valid") {
+        return null;
+      }
+
+      const diff = Math.abs(
+        forwardResult.totals.monthly - input.targetMonthlyCost,
+      );
+
+      return { result: forwardResult, diff };
+    })
+    .filter((candidate): candidate is { result: CalculationResult; diff: number } => candidate !== null)
+    .sort((a, b) => a.diff - b.diff);
+
+  if (evaluatedCandidates.length > 0) {
+    return evaluatedCandidates[0].result;
+  }
+
+  errors.salary = "salary-required";
+
+  return {
+    status: "invalid",
+    errors,
+    contributions: [],
+    accruals: [],
+    totals: {
+      monthlyOutOfPocket: 0,
+      monthly: 0,
+      annual: 0,
+    },
+    salaryBase: 0,
+    context: {
+      exonerationApplied: false,
+      transportIncluded: false,
+      transportAmount: 0,
+      arlRate: 0,
+      contributionBase: 0,
     },
   };
 }

@@ -96,6 +96,45 @@
     "descriptions": {
       "contributions": "Aportes obligatorios mensuales del empleador",
       "accruals": "Prestaciones acumuladas pagadas de forma anual o semestral"
+    },
+    "costs": {
+      "outOfPocket": {
+        "label": "Pago mensual efectivo",
+        "badge": "Real",
+        "description": "Lo que pagas cada mes desde tu cuenta bancaria"
+      },
+      "annualized": {
+        "label": "Costo mensual real",
+        "badge": "Anualizado",
+        "description": "Incluyendo prestaciones pagadas semestral o anualmente"
+      },
+      "warning": {
+        "title": "¡Presupuesta los pagos concentrados!",
+        "description": "La diferencia se acumula mensualmente y se paga en sumas globales: Prima (junio y diciembre), Cesantías (febrero), Vacaciones (al tomarse).",
+        "difference": "Se acumula mensualmente:",
+        "annual": "Total por año:"
+      }
+    },
+    "mode": {
+      "forward": "Calcular desde salario",
+      "reverse": "Calcular desde presupuesto",
+      "budgetLabel": "Presupuesto mensual total",
+      "budgetHelper": "Ingresa tu presupuesto mensual total de contratación",
+      "employeeSalary": "Empleado recibe",
+      "employeeSalaryDescription": "Este es el salario que puedes ofrecer con tu presupuesto"
+    },
+    "table": {
+      "item": "Concepto",
+      "monthly": "Mensual",
+      "annual": "Anual",
+      "frequency": "Pago",
+      "total": "Total"
+    },
+    "frequency": {
+      "monthly": "Mensual",
+      "semiAnnual": "Jun y Dic",
+      "annual": "Febrero",
+      "whenTaken": "Al tomarse"
     }
   },
   "context": {

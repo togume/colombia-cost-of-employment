@@ -96,6 +96,45 @@
     "descriptions": {
       "contributions": "Mandatory monthly employer contributions",
       "accruals": "Accrued benefits paid annually or semi-annually"
+    },
+    "costs": {
+      "outOfPocket": {
+        "label": "Monthly out-of-pocket",
+        "badge": "Actual",
+        "description": "What you pay from your bank account each month"
+      },
+      "annualized": {
+        "label": "True monthly cost",
+        "badge": "Annualized",
+        "description": "Including accruals paid semi-annually or annually"
+      },
+      "warning": {
+        "title": "Budget for lumpy payments!",
+        "description": "The difference accumulates monthly and is paid in lump sums: Prima (June & December), Cesantías (February), Vacaciones (when taken).",
+        "difference": "Accumulates monthly:",
+        "annual": "Total per year:"
+      }
+    },
+    "mode": {
+      "forward": "Calculate from salary",
+      "reverse": "Calculate from budget",
+      "budgetLabel": "Total monthly budget",
+      "budgetHelper": "Enter your total monthly employment budget",
+      "employeeSalary": "Employee receives",
+      "employeeSalaryDescription": "This is the take-home salary you can offer with your budget"
+    },
+    "table": {
+      "item": "Item",
+      "monthly": "Monthly",
+      "annual": "Annual",
+      "frequency": "Payment",
+      "total": "Total"
+    },
+    "frequency": {
+      "monthly": "Monthly",
+      "semiAnnual": "Jun & Dec",
+      "annual": "February",
+      "whenTaken": "When taken"
     }
   },
   "context": {
