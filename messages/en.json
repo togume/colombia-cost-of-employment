@@ -84,6 +84,20 @@
     "integralSalary": "Integral salary",
     "empty": "No items in this category."
   },
+  "calculator": {
+    "resetButton": {
+      "label": "Reset to SMMLV",
+      "title": "Reset salary to the current minimum wage"
+    },
+    "advanced": {
+      "title": "Advanced settings"
+    },
+    "percentFromBase": "+{percent}% from base salary",
+    "descriptions": {
+      "contributions": "Mandatory monthly employer contributions",
+      "accruals": "Accrued benefits paid annually or semi-annually"
+    }
+  },
   "context": {
     "arlRate": "ARL rate",
     "transport": "Auxilio de transporte",

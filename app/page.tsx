@@ -11,34 +11,37 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b border-neutral-200 bg-white/90 py-10 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/80">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-start justify-between gap-6">
-            <div className="space-y-4">
-              <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-200">
-                {heroT("badge")}
-              </span>
-              <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white sm:text-4xl">
-                {heroT("title")}
-              </h1>
-              <p className="max-w-2xl text-base text-neutral-600 dark:text-neutral-300 sm:text-lg">
-                {heroT("subtitle")}
-              </p>
-            </div>
+      <header className="relative overflow-hidden border-b border-neutral-200 bg-gradient-to-br from-white via-blue-50/30 to-yellow-50/20 py-16 backdrop-blur dark:border-neutral-800 dark:from-neutral-900 dark:via-blue-950/20 dark:to-yellow-950/10 sm:py-20">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015] dark:opacity-[0.02]"></div>
+        <div className="relative mx-auto flex max-w-7xl flex-col gap-12 px-4 sm:px-6 lg:px-8">
+          <div className="absolute right-4 top-4 sm:right-6 sm:top-6 lg:right-8 lg:top-8">
             <LanguageToggle />
+          </div>
+          <div className="mx-auto max-w-4xl space-y-6 text-center pt-8 sm:pt-0">
+            <span className="inline-flex items-center rounded-full bg-gradient-to-r from-blue-500/10 to-yellow-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-700 ring-1 ring-blue-500/20 dark:text-blue-300 dark:ring-blue-400/30">
+              {heroT("badge")}
+            </span>
+            <h1 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-5xl lg:text-6xl">
+              {heroT("title")}
+            </h1>
+            <p className="mx-auto max-w-3xl text-lg text-neutral-600 dark:text-neutral-300 sm:text-xl">
+              {heroT("subtitle")}
+            </p>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6 lg:px-8">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-12 px-4 py-12 sm:px-6 lg:px-8">
         <CalculatorCard />
-        <ExplainerAccordion />
+        <div className="mx-auto w-full max-w-4xl">
+          <ExplainerAccordion />
+        </div>
       </main>
 
-      <footer className="border-t border-neutral-200 bg-white py-8 dark:border-neutral-800 dark:bg-neutral-950">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">{footerT("disclaimer")}</p>
-          <p className="mt-3 text-sm text-neutral-500 dark:text-neutral-400">{footerT("contact")}</p>
+      <footer className="border-t border-neutral-200 bg-gradient-to-br from-neutral-50 to-neutral-100/50 py-12 dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-950">
+        <div className="mx-auto max-w-6xl space-y-4 px-4 sm:px-6 lg:px-8">
+          <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{footerT("disclaimer")}</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-500">{footerT("contact")}</p>
         </div>
       </footer>
     </div>

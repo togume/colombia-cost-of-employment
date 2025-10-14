@@ -84,6 +84,20 @@
     "integralSalary": "Salario integral",
     "empty": "No hay elementos en esta categoría."
   },
+  "calculator": {
+    "resetButton": {
+      "label": "Restablecer al SMMLV",
+      "title": "Restablecer el salario al salario mínimo vigente"
+    },
+    "advanced": {
+      "title": "Configuración avanzada"
+    },
+    "percentFromBase": "+{percent}% sobre el salario base",
+    "descriptions": {
+      "contributions": "Aportes obligatorios mensuales del empleador",
+      "accruals": "Prestaciones acumuladas pagadas de forma anual o semestral"
+    }
+  },
   "context": {
     "arlRate": "Tasa ARL",
     "transport": "Auxilio de transporte",

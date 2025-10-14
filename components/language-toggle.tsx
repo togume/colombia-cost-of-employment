@@ -21,12 +21,12 @@ export function LanguageToggle() {
   };
 
   return (
-    <div className="flex items-center gap-3" aria-live="polite">
-      <span id={labelId} className="text-sm font-medium text-neutral-600">
+    <div className="flex items-center gap-3 rounded-full border border-neutral-200/60 bg-white/80 px-4 py-2 shadow-sm backdrop-blur dark:border-neutral-700/60 dark:bg-neutral-900/80" aria-live="polite">
+      <span id={labelId} className="text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
         {t("label")}
       </span>
       <div
-        className="inline-flex rounded-full border border-neutral-200 bg-neutral-50 p-1 dark:border-neutral-800 dark:bg-neutral-900/60"
+        className="inline-flex gap-1 rounded-full bg-neutral-100 p-1 dark:bg-neutral-800"
         role="group"
         aria-labelledby={labelId}
       >
@@ -37,10 +37,10 @@ export function LanguageToggle() {
             disabled={isLoading}
             onClick={() => setLocale(code)}
             className={cn(
-              "rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500",
+              "rounded-full px-3 py-1.5 text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500",
               locale === code
-                ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-800 dark:text-white"
-                : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-white",
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white",
             )}
             aria-pressed={locale === code}
           >
