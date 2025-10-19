@@ -156,6 +156,76 @@
   "integral": {
     "note": "Al activar salario integral, las prestaciones (prima, cesantías, intereses, vacaciones) se incluyen dentro del salario. Solo permanecen los aportes obligatorios."
   },
+  "liquidation": {
+    "badge": "Liquidación",
+    "title": "Calcula la liquidación final",
+    "subtitle": "Estima los pagos legales cuando finaliza la relación laboral. Transparencia para empleador y empleado.",
+    "fields": {
+      "salary": {
+        "label": "Salario base mensual",
+        "helper": "Salario mensual bruto utilizado en la nómina."
+      },
+      "smmlv": {
+        "label": "SMMLV de referencia",
+        "helper": "Salario mínimo vigente para definir el auxilio de transporte."
+      },
+      "startDate": {
+        "label": "Fecha de ingreso",
+        "helper": "Primer día cubierto por el contrato."
+      },
+      "endDate": {
+        "label": "Fecha de retiro",
+        "helper": "Último día trabajado o fecha de terminación del contrato."
+      }
+    },
+    "assumptions": "Asume un contrato ordinario (no integral) con pago mensual, sin liquidaciones parciales previas en el año y las fórmulas estándar de 360 días para prima, cesantías, intereses y vacaciones. Los valores son estimados; confirma cifras exactas con tu área de nómina o asesor legal.",
+    "results": {
+      "total": {
+        "label": "Liquidación estimada"
+      },
+      "context": {
+        "tenureDays": "Tiempo laborado",
+        "finalPeriod": "Días del último periodo",
+        "transport": "Auxilio de transporte",
+        "daysValue": "{count, number} días",
+        "transportIncluded": "Incluido — {amount} se suma a la base para prima y cesantías.",
+        "transportExcluded": "No se incluye porque el salario supera 2× SMMLV."
+      },
+      "breakdown": {
+        "title": "Detalle de conceptos",
+        "subtitle": "Valores legales a pagar en la liquidación.",
+        "items": {
+          "outstanding_salary": {
+            "label": "Salario pendiente"
+          },
+          "prima": {
+            "label": "Prima proporcional"
+          },
+          "cesantias": {
+            "label": "Cesantías"
+          },
+          "intereses_cesantias": {
+            "label": "Intereses de cesantías"
+          },
+          "vacaciones": {
+            "label": "Vacaciones no disfrutadas"
+          }
+        }
+      }
+    },
+    "errors": {
+      "blocker": "Completa los campos para ver el detalle de la liquidación."
+    },
+    "validation": {
+      "salary-required": "Ingresa el salario mensual.",
+      "salary-positive": "El salario debe ser mayor que cero.",
+      "smmlv-required": "Ingresa un valor válido de SMMLV.",
+      "smmlv-positive": "El SMMLV debe ser mayor que cero.",
+      "start-required": "Selecciona la fecha de ingreso.",
+      "end-required": "Selecciona la fecha de retiro.",
+      "date-order": "La fecha de retiro debe ser posterior a la de ingreso."
+    }
+  },
   "explainer": {
     "title": "Cómo se compone el costo laboral",
     "sections": {

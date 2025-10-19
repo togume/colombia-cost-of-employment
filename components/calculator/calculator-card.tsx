@@ -10,7 +10,7 @@ import {
   type AccrualId,
 } from "@/lib/calculator";
 import { DEFAULT_YEAR, getYearlyRates, type RiskClass } from "@/lib/rates";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, parseCurrencyInput, formatCurrencyInput } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type CalculatorMode = "forward" | "reverse";
@@ -35,23 +35,6 @@ const ACCRUAL_IDS: AccrualId[] = [
   "vacaciones",
 ];
 
-function parseMoney(value: string): number | null {
-  const cleaned = value.replace(/[^\d]/g, "");
-  if (!cleaned) {
-    return null;
-  }
-  return Number.parseInt(cleaned, 10);
-}
-
-function formatInputMoney(value: string): string {
-  const cleaned = value.replace(/[^\d]/g, "");
-  if (!cleaned) {
-    return "";
-  }
-  const number = Number.parseInt(cleaned, 10);
-  return `$ ${number.toLocaleString("es-CO")}`;
-}
-
 export function CalculatorCard() {
   const formT = useTranslations("form");
   const resultT = useTranslations("results");
@@ -71,10 +54,10 @@ export function CalculatorCard() {
   const [useIntegral, setUseIntegral] = useState(false);
   const [integralInput, setIntegralInput] = useState<string>("");
 
-  const salaryValue = useMemo(() => parseMoney(salaryInput), [salaryInput]);
-  const budgetValue = useMemo(() => parseMoney(budgetInput), [budgetInput]);
-  const smmlvValue = useMemo(() => parseMoney(smmlvInput), [smmlvInput]);
-  const integralValue = useMemo(() => parseMoney(integralInput), [integralInput]);
+  const salaryValue = useMemo(() => parseCurrencyInput(salaryInput), [salaryInput]);
+  const budgetValue = useMemo(() => parseCurrencyInput(budgetInput), [budgetInput]);
+  const smmlvValue = useMemo(() => parseCurrencyInput(smmlvInput), [smmlvInput]);
+  const integralValue = useMemo(() => parseCurrencyInput(integralInput), [integralInput]);
 
   const calculation = useMemo(() => {
     if (mode === "reverse") {
@@ -201,9 +184,9 @@ export function CalculatorCard() {
                     "mt-4 w-full border-0 bg-transparent text-center text-3xl font-bold text-neutral-900 outline-none transition placeholder:text-neutral-300 focus:text-blue-600 dark:text-neutral-50 dark:placeholder:text-neutral-700 dark:focus:text-blue-400 sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl",
                     useIntegral ? "opacity-60" : "",
                   )}
-                  value={formatInputMoney(salaryInput)}
+                  value={formatCurrencyInput(salaryInput)}
                   onChange={(event) => handleSalaryChange(event.target.value)}
-                  placeholder={formatInputMoney(String(rates.SMMLV))}
+                  placeholder={formatCurrencyInput(String(rates.SMMLV))}
                 />
                 <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
                   {formT("baseSalary.helper")}
@@ -219,9 +202,9 @@ export function CalculatorCard() {
                   inputMode="numeric"
                   autoComplete="off"
                   className="mt-4 w-full border-0 bg-transparent text-center text-3xl font-bold text-neutral-900 outline-none transition placeholder:text-neutral-300 focus:text-blue-600 dark:text-neutral-50 dark:placeholder:text-neutral-700 dark:focus:text-blue-400 sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
-                  value={formatInputMoney(budgetInput)}
+                  value={formatCurrencyInput(budgetInput)}
                   onChange={(event) => handleBudgetChange(event.target.value)}
-                  placeholder={formatInputMoney("3000000")}
+                  placeholder={formatCurrencyInput("3000000")}
                 />
                 <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
                   {calculatorT("mode.budgetHelper")}
@@ -549,7 +532,7 @@ function CurrencyInput({
         "w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-base font-semibold text-neutral-900 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-50 dark:placeholder:text-neutral-600",
         disabled ? "opacity-60" : "",
       )}
-      value={formatInputMoney(value)}
+      value={formatCurrencyInput(value)}
       onChange={(event) => handleChange(event.target.value)}
       placeholder={placeholder}
     />

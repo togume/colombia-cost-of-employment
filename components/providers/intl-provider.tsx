@@ -65,7 +65,6 @@ export function IntlProviderWrapper({ children }: IntlProviderWrapperProps) {
 
   useEffect(() => {
     let isActive = true;
-    setIsLoading(true);
     loadMessages(locale)
       .then((loaded) => {
         if (!isActive) return;
@@ -88,6 +87,7 @@ export function IntlProviderWrapper({ children }: IntlProviderWrapperProps) {
       if (event.key === STORAGE_KEY && typeof event.newValue === "string") {
         const newLocale = event.newValue as SupportedLocale;
         if (SUPPORTED_LOCALES.includes(newLocale)) {
+          setIsLoading(true);
           setLocaleState(newLocale);
         }
       }
@@ -106,6 +106,7 @@ export function IntlProviderWrapper({ children }: IntlProviderWrapperProps) {
   }, [locale]);
 
   const setLocale = useCallback((nextLocale: SupportedLocale) => {
+    setIsLoading(true);
     setLocaleState(nextLocale);
     if (typeof window !== "undefined") {
       window.localStorage.setItem(STORAGE_KEY, nextLocale);

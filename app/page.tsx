@@ -10,6 +10,7 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { useTranslations } from "@/hooks/use-translations";
+import { LiquidationCard } from "@/components/liquidation/liquidation-card";
 
 export default function Home() {
   const heroT = useTranslations("hero");
@@ -50,6 +51,7 @@ export default function Home() {
         <div className="mx-auto w-full max-w-4xl">
           <ExplainerAccordion />
         </div>
+        <LiquidationCard />
       </main>
 
       <footer className="border-t border-neutral-200 bg-gradient-to-br from-neutral-50 to-neutral-100/50 py-12 dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-950">

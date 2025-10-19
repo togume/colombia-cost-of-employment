@@ -19,6 +19,25 @@ export function formatCurrency(
   return `$ ${amount}`;
 }
 
+export function parseCurrencyInput(value: string): number | null {
+  const cleaned = value.replace(/[^\d]/g, "");
+  if (!cleaned) {
+    return null;
+  }
+
+  return Number.parseInt(cleaned, 10);
+}
+
+export function formatCurrencyInput(value: string): string {
+  const cleaned = value.replace(/[^\d]/g, "");
+  if (!cleaned) {
+    return "";
+  }
+
+  const number = Number.parseInt(cleaned, 10);
+  return `$ ${number.toLocaleString("es-CO")}`;
+}
+
 export function formatPercent(
   value: number,
   locale: string,

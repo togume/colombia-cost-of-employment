@@ -156,6 +156,76 @@
   "integral": {
     "note": "When salario integral is enabled, prestaciones (prima, cesantías, intereses, vacaciones) are internalised in the salary. Only statutory contributions remain."
   },
+  "liquidation": {
+    "badge": "Liquidación",
+    "title": "Calculate final settlement",
+    "subtitle": "Estimate statutory payouts when an employment relationship ends. Designed for transparency between employer and employee.",
+    "fields": {
+      "salary": {
+        "label": "Monthly base salary",
+        "helper": "Gross monthly salary used for payroll calculations."
+      },
+      "smmlv": {
+        "label": "SMMLV reference",
+        "helper": "Current minimum wage to determine auxilio de transporte eligibility."
+      },
+      "startDate": {
+        "label": "Employment start date",
+        "helper": "First day covered by the contract."
+      },
+      "endDate": {
+        "label": "Termination date",
+        "helper": "Last day worked or contract end date."
+      }
+    },
+    "assumptions": "Assumes an ordinary (non-integral) contract paid monthly, no prior partial settlements this year, and standard 360-day formulas for prima, cesantías, interests, and vacations. Results are an estimate—confirm exact amounts with payroll or legal counsel.",
+    "results": {
+      "total": {
+        "label": "Estimated settlement"
+      },
+      "context": {
+        "tenureDays": "Employment duration",
+        "finalPeriod": "Days in final pay period",
+        "transport": "Auxilio de transporte",
+        "daysValue": "{count, number} days",
+        "transportIncluded": "Included — {amount} added to the base for prima and cesantías.",
+        "transportExcluded": "Not included because the salary exceeds 2× SMMLV."
+      },
+      "breakdown": {
+        "title": "Detailed breakdown",
+        "subtitle": "Statutory concepts to pay upon termination.",
+        "items": {
+          "outstanding_salary": {
+            "label": "Outstanding salary"
+          },
+          "prima": {
+            "label": "Prima proporcional"
+          },
+          "cesantias": {
+            "label": "Cesantías"
+          },
+          "intereses_cesantias": {
+            "label": "Intereses de cesantías"
+          },
+          "vacaciones": {
+            "label": "Vacaciones no disfrutadas"
+          }
+        }
+      }
+    },
+    "errors": {
+      "blocker": "Complete the fields above to see the liquidation breakdown."
+    },
+    "validation": {
+      "salary-required": "Enter the monthly salary.",
+      "salary-positive": "Salary must be greater than zero.",
+      "smmlv-required": "Enter a valid SMMLV amount.",
+      "smmlv-positive": "SMMLV must be greater than zero.",
+      "start-required": "Select the employment start date.",
+      "end-required": "Select the termination date.",
+      "date-order": "Termination date must be after the start date."
+    }
+  },
   "explainer": {
     "title": "How employer costs are built",
     "sections": {
