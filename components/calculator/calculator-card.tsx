@@ -8,6 +8,7 @@ import {
   computeSalaryFromBudget,
   type ContributionId,
   type AccrualId,
+  type CalculationResult,
 } from "@/lib/calculator";
 import { DEFAULT_YEAR, getYearlyRates, type RiskClass } from "@/lib/rates";
 import { formatCurrency, parseCurrencyInput, formatCurrencyInput } from "@/lib/format";
@@ -361,6 +362,20 @@ export function CalculatorCard() {
             </dd>
           </div>
         </div>
+      )}
+
+      {/* Shareable Snapshot */}
+      {isValid && (
+        <ShareableSnapshot
+          summary={calculation.summary}
+          totals={calculation.totals}
+          formatMoney={formatMoney}
+          salaryBase={calculation.salaryBase}
+          transportAmount={
+            calculation.context.transportIncluded ? calculation.context.transportAmount : 0
+          }
+          contributions={calculation.contributions}
+        />
       )}
 
       {/* Advanced Settings - Collapsible */}
@@ -727,6 +742,322 @@ function ColorCodedBreakdownList<T extends string>({
           </tr>
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function ShareableSnapshot({
+  summary,
+  totals,
+  formatMoney,
+  salaryBase,
+  transportAmount,
+  contributions,
+}: {
+  summary: CalculationResult["summary"];
+  totals: CalculationResult["totals"];
+  formatMoney: (value: number) => string;
+  salaryBase: number;
+  transportAmount: number;
+  contributions: CalculationResult["contributions"];
+}) {
+  const snapshotT = useTranslations("snapshot");
+  const [showDeductions, setShowDeductions] = useState(false);
+
+  const annualAccruals = summary.accrualsMonthly * 12;
+
+  const deductionRows = summary.employeeDeductions.map((item) => ({
+    label: snapshotT(`deductions.${item.id}`),
+    amount: item.amount,
+  }));
+
+  const incomeTotal = salaryBase + transportAmount;
+  const deductionTotal = deductionRows.reduce((sum, row) => sum + row.amount, 0);
+  const employerAgencyIds: ContributionId[] = ["salud", "pension", "arl", "caja"];
+  const parafiscalesIds: ContributionId[] = ["sena", "icbf"];
+
+  const sumByIds = (ids: ContributionId[]) =>
+    contributions
+      .filter((item) => ids.includes(item.id as ContributionId))
+      .reduce((sum, item) => sum + item.amount, 0);
+
+  const epsAfpArlCaja = sumByIds(employerAgencyIds);
+  const parafiscales = sumByIds(parafiscalesIds);
+  const contributionsTotal = contributions.reduce((sum, item) => sum + item.amount, 0);
+  const employerHiddenMonthly = contributionsTotal + summary.accrualsMonthly;
+  const employerPortion = Math.max(0, totals.monthly - (summary.employeeNetMonthly + deductionTotal));
+
+  const heroContext = snapshotT("hero.context", {
+    salary: formatMoney(salaryBase),
+    transport: formatMoney(transportAmount),
+    deductions: formatMoney(deductionTotal),
+  });
+
+  const barSegments = [
+    {
+      id: "net",
+      label: snapshotT("bar.net"),
+      value: summary.employeeNetMonthly,
+      className: "bg-green-500",
+    },
+    {
+      id: "deductions",
+      label: snapshotT("bar.deductions"),
+      value: deductionTotal,
+      className: "bg-amber-500",
+    },
+    {
+      id: "employer",
+      label: snapshotT("bar.employer"),
+      value: employerPortion,
+      className: "bg-blue-600",
+    },
+  ].filter((segment) => segment.value > 0);
+
+  return (
+    <section className="rounded-3xl border border-neutral-200 bg-white/90 p-6 shadow-md dark:border-neutral-800 dark:bg-neutral-900/60 sm:p-8">
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
+          {snapshotT("title")}
+        </h3>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">{snapshotT("subtitle")}</p>
+      </div>
+      <div className="mt-5 rounded-3xl border border-neutral-200 bg-white px-4 py-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+        <p className="text-xs font-semibold uppercase tracking-wide text-green-600 dark:text-green-300">
+          {snapshotT("hero.label")}
+        </p>
+        <p className="mt-2 text-4xl font-bold text-neutral-900 dark:text-neutral-50">
+          {formatMoney(summary.employeeNetMonthly)}
+        </p>
+      <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">{heroContext}</p>
+    </div>
+
+      <ProportionBar
+        segments={barSegments}
+        total={summary.employeeNetMonthly + deductionTotal + employerPortion}
+        formatMoney={formatMoney}
+      />
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[2fr,1fr]">
+        <div className="rounded-3xl border border-neutral-200 bg-white/90 p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/60">
+          <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+            {snapshotT("flow.title")}
+          </p>
+          <div className="mt-4 space-y-4">
+            <FlowRow
+              variant="plus"
+              label={snapshotT("flow.grossLabel")}
+              amount={formatMoney(incomeTotal)}
+              helper={snapshotT("flow.grossDetail", {
+                salary: formatMoney(salaryBase),
+                transport: formatMoney(transportAmount),
+              })}
+            />
+            <FlowRow
+              variant="minus"
+              label={snapshotT("flow.deductionsLabel")}
+              amount={formatMoney(deductionTotal)}
+              actionLabel={
+                deductionRows.length > 0
+                  ? showDeductions
+                    ? snapshotT("flow.toggle.hide")
+                    : snapshotT("flow.toggle.show", { count: deductionRows.length })
+                  : undefined
+              }
+              onAction={
+                deductionRows.length > 0 ? () => setShowDeductions((prev) => !prev) : undefined
+              }
+              showConnector
+            />
+            {showDeductions && (
+              <div className="ml-9 rounded-2xl border border-neutral-200 bg-neutral-50/80 p-3 text-sm text-neutral-700 dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-200">
+                <ul className="space-y-1">
+                  {deductionRows.map((row) => (
+                    <li key={row.label} className="flex items-center justify-between gap-3">
+                      <span>{row.label}</span>
+                      <span className="font-semibold">{formatMoney(row.amount)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <FlowRow
+              variant="equals"
+              label={snapshotT("flow.netLabel")}
+              amount={formatMoney(summary.employeeNetMonthly)}
+              showConnector={false}
+            />
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-neutral-200 bg-neutral-50/80 p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/60">
+          <p className="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-300">
+            {snapshotT("employer.additionalTitle")}
+          </p>
+          <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-300">
+            {snapshotT("employer.additionalSubtitle")}
+          </p>
+          <p className="mt-4 text-3xl font-bold text-neutral-900 dark:text-neutral-50">
+            {formatMoney(employerHiddenMonthly)}
+          </p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">{snapshotT("employer.perMonth")}</p>
+          <div className="mt-4 rounded-2xl bg-white/80 p-4 text-sm text-neutral-700 shadow-inner dark:bg-neutral-900/70 dark:text-neutral-200">
+            <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+              {snapshotT("employer.includes")}
+            </p>
+            <ul className="mt-3 space-y-2">
+              <li className="flex items-center justify-between gap-3">
+                <span>{snapshotT("employer.list.core")}</span>
+                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                  {formatMoney(epsAfpArlCaja)}
+                </span>
+              </li>
+              <li className="flex items-center justify-between gap-3">
+                <span>{snapshotT("employer.list.accruals")}</span>
+                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                  {formatMoney(summary.accrualsMonthly)}
+                </span>
+              </li>
+              <li className="flex items-center justify-between gap-3">
+                <span>{snapshotT("employer.list.parafiscales")}</span>
+                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                  {formatMoney(parafiscales)}
+                </span>
+              </li>
+            </ul>
+            <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+              {snapshotT("employer.accrualNote", { amount: formatMoney(annualAccruals) })}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <SnapshotSummaryCard
+        label={snapshotT("totals.companyMonthly")}
+        amount={formatMoney(totals.monthly)}
+        helper={snapshotT("totals.companyAnnual", { amount: formatMoney(totals.annual) })}
+      />
+    </section>
+  );
+}
+
+function FlowRow({
+  variant,
+  label,
+  amount,
+  helper,
+  actionLabel,
+  onAction,
+  showConnector = true,
+}: {
+  variant: "plus" | "minus" | "equals";
+  label: string;
+  amount: string;
+  helper?: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  showConnector?: boolean;
+}) {
+  const iconConfig = {
+    plus: {
+      symbol: "+",
+      className: "bg-green-500 text-white",
+    },
+    minus: {
+      symbol: "−",
+      className: "bg-red-500 text-white",
+    },
+    equals: {
+      symbol: "=",
+      className: "bg-blue-600 text-white",
+    },
+  }[variant];
+
+  return (
+    <div className="relative flex gap-4">
+      <div className="flex flex-col items-center">
+        <span className={cn("grid size-10 place-items-center rounded-xl text-2xl font-bold", iconConfig.className)}>
+          {iconConfig.symbol}
+        </span>
+        {showConnector && (
+          <span className="mt-1 flex-1 w-px bg-neutral-200 dark:bg-neutral-700" aria-hidden="true"></span>
+        )}
+      </div>
+      <div className="flex-1">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{label}</p>
+            {helper && <p className="text-xs text-neutral-500 dark:text-neutral-400">{helper}</p>}
+          </div>
+          <p
+            className={cn(
+              "text-xl font-bold",
+              variant === "equals" ? "text-blue-600 dark:text-blue-300" : "text-neutral-900 dark:text-neutral-50",
+            )}
+          >
+            {amount}
+          </p>
+        </div>
+        {actionLabel && onAction && (
+          <button
+            type="button"
+            onClick={onAction}
+            className="mt-2 text-xs font-semibold text-blue-600 underline-offset-2 hover:underline dark:text-blue-300"
+          >
+            {actionLabel}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ProportionBar({
+  segments,
+  total,
+  formatMoney,
+}: {
+  segments: Array<{ id: string; label: string; value: number; className: string }>;
+  total: number;
+  formatMoney: (value: number) => string;
+}) {
+  if (total <= 0 || segments.length === 0) {
+    return null;
+  }
+  return (
+    <div className="mt-5 space-y-2">
+      <div className="flex h-4 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
+        {segments.map((segment) => (
+          <div
+            key={segment.id}
+            className={cn(segment.className, "relative")}
+            style={{ flex: segment.value }}
+            aria-label={segment.label}
+          />
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-4 text-xs">
+        {segments.map((segment) => (
+          <div key={segment.id} className="flex items-center gap-2">
+            <span className={cn("size-3 rounded-full", segment.className)}></span>
+            <span className="font-semibold text-neutral-700 dark:text-neutral-200">
+              {segment.label} · {formatMoney(segment.value)}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SnapshotSummaryCard({ label, amount, helper }: { label: string; amount: string; helper?: string }) {
+  return (
+    <div className="rounded-2xl border border-neutral-200 bg-white p-4 text-center shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+      <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+        {label}
+      </p>
+      <p className="mt-2 text-2xl font-bold text-neutral-900 dark:text-neutral-50">{amount}</p>
+      {helper && <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{helper}</p>}
     </div>
   );
 }

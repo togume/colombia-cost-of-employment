@@ -28,6 +28,11 @@ export interface AccrualRates {
   vacaciones: number;
 }
 
+export interface EmployeeContributionRates {
+  salud_employee: number;
+  pension_employee: number;
+}
+
 export interface IntegralRules {
   min_smmlv: number;
   factor_prestacional: number;
@@ -38,6 +43,7 @@ export interface YearlyRates {
   aux_transporte: number;
   contrib: EmployerContribRates;
   accruals: AccrualRates;
+  employee: EmployeeContributionRates;
   integral: IntegralRules;
 }
 

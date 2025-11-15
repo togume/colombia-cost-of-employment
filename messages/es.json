@@ -3,6 +3,53 @@
     "title": "Calculadora de costo laboral en Colombia",
     "description": "Calcula el costo mensual y anual total de contratar en Colombia con contexto legal en tiempo real."
   },
+  "snapshot": {
+    "title": "Resumen para compartir",
+    "subtitle": "Toma un pantallazo de esta tarjeta para alinear expectativas con talento y colaboradores.",
+    "hero": {
+      "label": "Tu ingreso mensual",
+      "context": "Salario {salary} + transporte {transport} − descuentos {deductions}"
+    },
+    "flow": {
+      "title": "Cómo llegamos a este valor",
+      "grossLabel": "Pago mensual bruto",
+      "grossDetail": "Salario {salary} + transporte {transport}",
+      "deductionsLabel": "Tus descuentos",
+      "toggle": {
+        "show": "Ver detalles de {count} descuentos",
+        "hide": "Ocultar detalles"
+      },
+      "netLabel": "Recibes en tu cuenta"
+    },
+    "bar": {
+      "net": "Tú recibes",
+      "deductions": "Tus descuentos",
+      "employer": "Costos solo del empleador"
+    },
+    "deductions": {
+      "salud_employee": "4% Salud (aporte empleado)",
+      "pension_employee": "4% Pensión (aporte empleado)"
+    },
+    "employer": {
+      "additionalTitle": "Lo que paga la empresa (no llega a tu cuenta)",
+      "additionalSubtitle": "Dinero que la empresa destina a aportes y provisiones además de tu consignación.",
+      "perMonth": "mensual",
+      "includes": "Esto incluye:",
+      "list": {
+        "core": "EPS, AFP, ARL, Caja de compensación",
+        "accruals": "Provisión de prima, cesantías y vacaciones",
+        "parafiscales": "Parafiscales (SENA, ICBF)"
+      },
+      "accrualNote": "Estas provisiones suman {amount} al año."
+    },
+    "employerAgencies": "Pagos a EPS / AFP / ARL / Caja",
+    "accrualSavings": "Reserva para pagos anuales",
+    "annualAmount": "{amount} al año",
+    "totals": {
+      "companyMonthly": "Costo total para la empresa",
+      "companyAnnual": "Por año: {amount}"
+    }
+  },
   "language": {
     "label": "Idioma",
     "english": "English",

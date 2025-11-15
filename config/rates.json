@@ -22,6 +22,10 @@
       "intereses_cesantias": 0.01,
       "vacaciones": 0.0417
     },
+    "employee": {
+      "salud_employee": 0.04,
+      "pension_employee": 0.04
+    },
     "integral": {
       "min_smmlv": 13,
       "factor_prestacional": 0.3

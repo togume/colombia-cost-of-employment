@@ -16,6 +16,8 @@ export type AccrualId =
 
 export type BreakdownId = ContributionId | AccrualId;
 
+export type EmployeeDeductionId = "salud_employee" | "pension_employee";
+
 export interface CalculatorInput {
   salary: number;
   smmlv: number;
@@ -68,6 +70,13 @@ export interface CalculationResult {
   };
   salaryBase: number;
   context: CalculationContext;
+  summary: {
+    employeeNetMonthly: number;
+    employeeGrossTransfer: number;
+    employeeDeductions: Array<{ id: EmployeeDeductionId; amount: number }>;
+    employerAgenciesMonthly: number;
+    accrualsMonthly: number;
+  };
 }
 
 const FIELD_ORDER: Array<keyof FieldErrorMap> = ["salary", "smmlv", "integralSalary"];
@@ -121,6 +130,16 @@ export function computeEmployerCosts(
         transportAmount: 0,
         arlRate: 0,
         contributionBase: 0,
+      },
+      summary: {
+        employeeNetMonthly: 0,
+        employeeGrossTransfer: 0,
+        employeeDeductions: [
+          { id: "salud_employee", amount: 0 },
+          { id: "pension_employee", amount: 0 },
+        ],
+        employerAgenciesMonthly: 0,
+        accrualsMonthly: 0,
       },
     };
   }
@@ -192,6 +211,24 @@ export function computeEmployerCosts(
   const contributionsTotal = contributions.reduce((sum, item) => sum + item.amount, 0);
   const accrualsTotal = accruals.reduce((sum, item) => sum + item.amount, 0);
 
+  const employeeDeductions = ([
+    {
+      id: "salud_employee",
+      amount: rates.employee.salud_employee * salary,
+    },
+    {
+      id: "pension_employee",
+      amount: rates.employee.pension_employee * salary,
+    },
+  ] satisfies Array<{ id: EmployeeDeductionId; amount: number }>).map((item) => ({
+    ...item,
+    amount: Math.max(0, item.amount),
+  }));
+
+  const employeeDeductionsTotal = employeeDeductions.reduce((sum, item) => sum + item.amount, 0);
+  const employeeGrossTransfer = salary + transportEligible;
+  const employeeNetMonthly = Math.max(0, employeeGrossTransfer - employeeDeductionsTotal);
+
   const monthlyOutOfPocket = salary + transportEligible + contributionsTotal;
   const monthlyTotal = monthlyOutOfPocket + accrualsTotal;
   const annualTotal = monthlyTotal * 12;
@@ -213,6 +250,13 @@ export function computeEmployerCosts(
       transportAmount: transportEligible,
       arlRate: rates.contrib.arl[input.arlClass],
       contributionBase,
+    },
+    summary: {
+      employeeNetMonthly,
+      employeeGrossTransfer,
+      employeeDeductions,
+      employerAgenciesMonthly: contributionsTotal,
+      accrualsMonthly: accrualsTotal,
     },
   };
 }
@@ -252,6 +296,16 @@ export function computeSalaryFromBudget(
         transportAmount: 0,
         arlRate: 0,
         contributionBase: 0,
+      },
+      summary: {
+        employeeNetMonthly: 0,
+        employeeGrossTransfer: 0,
+        employeeDeductions: [
+          { id: "salud_employee", amount: 0 },
+          { id: "pension_employee", amount: 0 },
+        ],
+        employerAgenciesMonthly: 0,
+        accrualsMonthly: 0,
       },
     };
   }
@@ -385,6 +439,16 @@ export function computeSalaryFromBudget(
       transportAmount: 0,
       arlRate: 0,
       contributionBase: 0,
+    },
+    summary: {
+      employeeNetMonthly: 0,
+      employeeGrossTransfer: 0,
+      employeeDeductions: [
+        { id: "salud_employee", amount: 0 },
+        { id: "pension_employee", amount: 0 },
+      ],
+      employerAgenciesMonthly: 0,
+      accrualsMonthly: 0,
     },
   };
 }

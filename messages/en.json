@@ -137,6 +137,53 @@
       "whenTaken": "When taken"
     }
   },
+  "snapshot": {
+    "title": "Shareable snapshot",
+    "subtitle": "Screenshot this card to align expectations with candidates and employees.",
+    "hero": {
+      "label": "Your monthly paycheck",
+      "context": "Salary {salary} + transport {transport} − deductions {deductions}"
+    },
+    "flow": {
+      "title": "How we got this amount",
+      "grossLabel": "Gross monthly pay",
+      "grossDetail": "Salary {salary} + transport {transport}",
+      "deductionsLabel": "Your deductions",
+      "toggle": {
+        "show": "See {count} deduction details",
+        "hide": "Hide deduction details"
+      },
+      "netLabel": "Net in your bank account"
+    },
+    "bar": {
+      "net": "You take home",
+      "deductions": "Your deductions",
+      "employer": "Employer-only costs"
+    },
+    "deductions": {
+      "salud_employee": "4% Salud employee contribution",
+      "pension_employee": "4% Pensión employee contribution"
+    },
+    "employer": {
+      "additionalTitle": "What your employer pays (you don’t see this)",
+      "additionalSubtitle": "Money your company transfers to benefits and reserves on top of your deposit.",
+      "perMonth": "per month",
+      "includes": "This includes:",
+      "list": {
+        "core": "EPS, AFP, ARL, Caja de compensación",
+        "accruals": "Provisions for prima, cesantías, vacations",
+        "parafiscales": "Parafiscales (SENA, ICBF)"
+      },
+      "accrualNote": "These reserves add up to {amount} per year."
+    },
+    "employerAgencies": "Paid to EPS / AFP / ARL / Caja",
+    "accrualSavings": "Set aside for annual payments",
+    "annualAmount": "{amount} per year",
+    "totals": {
+      "companyMonthly": "Total monthly cost for the employer",
+      "companyAnnual": "Per year: {amount}"
+    }
+  },
   "context": {
     "arlRate": "ARL rate",
     "transport": "Auxilio de transporte",
