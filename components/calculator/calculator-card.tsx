@@ -54,6 +54,7 @@ export function CalculatorCard() {
   const [exoneration, setExoneration] = useState(false);
   const [useIntegral, setUseIntegral] = useState(false);
   const [integralInput, setIntegralInput] = useState<string>("");
+  const [withPensionDeduction, setWithPensionDeduction] = useState(false);
 
   const salaryValue = useMemo(() => parseCurrencyInput(salaryInput), [salaryInput]);
   const budgetValue = useMemo(() => parseCurrencyInput(budgetInput), [budgetInput]);
@@ -68,6 +69,7 @@ export function CalculatorCard() {
           smmlv: smmlvValue ?? Number.NaN,
           arlClass,
           exoneration,
+          employeePensionContribution: withPensionDeduction,
         },
         rates,
       );
@@ -81,10 +83,21 @@ export function CalculatorCard() {
         exoneration,
         useIntegral,
         integralSalary: useIntegral ? integralValue ?? Number.NaN : undefined,
+        employeePensionContribution: withPensionDeduction,
       },
       rates,
     );
-  }, [mode, salaryValue, budgetValue, smmlvValue, arlClass, exoneration, useIntegral, integralValue]);
+  }, [
+    mode,
+    salaryValue,
+    budgetValue,
+    smmlvValue,
+    arlClass,
+    exoneration,
+    useIntegral,
+    integralValue,
+    withPensionDeduction,
+  ]);
 
   const isValid = calculation.status === "valid";
 
@@ -423,6 +436,12 @@ export function CalculatorCard() {
               onChange={setExoneration}
               label={formT("exoneration.label")}
               helper={formT("exoneration.helper")}
+            />
+            <CheckboxField
+              checked={withPensionDeduction}
+              onChange={setWithPensionDeduction}
+              label={formT("employeePension.label")}
+              helper={formT("employeePension.helper")}
             />
             <ToggleField
               checked={useIntegral}

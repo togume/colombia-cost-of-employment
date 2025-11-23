@@ -25,6 +25,7 @@ export interface CalculatorInput {
   exoneration: boolean;
   useIntegral: boolean;
   integralSalary?: number;
+  employeePensionContribution: boolean;
 }
 
 export interface BudgetCalculatorInput {
@@ -32,6 +33,7 @@ export interface BudgetCalculatorInput {
   smmlv: number;
   arlClass: RiskClass;
   exoneration: boolean;
+  employeePensionContribution: boolean;
 }
 
 export type FieldErrorCode =
@@ -211,16 +213,20 @@ export function computeEmployerCosts(
   const contributionsTotal = contributions.reduce((sum, item) => sum + item.amount, 0);
   const accrualsTotal = accruals.reduce((sum, item) => sum + item.amount, 0);
 
-  const employeeDeductions = ([
+  const employeeDeductionsRaw: Array<{ id: EmployeeDeductionId; amount: number }> = [
     {
       id: "salud_employee",
       amount: rates.employee.salud_employee * salary,
     },
-    {
+  ];
+  if (input.employeePensionContribution) {
+    employeeDeductionsRaw.push({
       id: "pension_employee",
       amount: rates.employee.pension_employee * salary,
-    },
-  ] satisfies Array<{ id: EmployeeDeductionId; amount: number }>).map((item) => ({
+    });
+  }
+
+  const employeeDeductions = employeeDeductionsRaw.map((item) => ({
     ...item,
     amount: Math.max(0, item.amount),
   }));
@@ -399,6 +405,7 @@ export function computeSalaryFromBudget(
           exoneration: input.exoneration,
           useIntegral: false,
           integralSalary: undefined,
+          employeePensionContribution: input.employeePensionContribution,
         },
         rates,
       );

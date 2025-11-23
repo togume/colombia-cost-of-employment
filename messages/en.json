@@ -48,6 +48,10 @@
     "integralAmount": {
       "label": "Integral salary (monthly)",
       "placeholder": "$ 18,500,000"
+    },
+    "employeePension": {
+      "label": "Employee keeps pension portion?",
+      "helper": "Turn on when the pension contribution is paid directly to the worker instead of withheld."
     }
   },
   "results": {

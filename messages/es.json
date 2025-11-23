@@ -95,6 +95,10 @@
     "integralAmount": {
       "label": "Salario integral (mensual)",
       "placeholder": "$ 18.500.000"
+    },
+    "employeePension": {
+      "label": "Empleado no aporta a pensión por edad o negociación",
+      "helper": "Actívalo cuando la persona recibe ese dinero directamente y no se retiene para pensión."
     }
   },
   "results": {
