@@ -44,6 +44,15 @@
       "subhead": "Dinero en mano más prestaciones acumuladas.",
       "helper": "Disponible: {cash} + beneficios: {benefits}"
     },
+    "pension": {
+      "title": "Tu aporte mensual a pensión",
+      "subhead": "Suma del aporte del empleador y tu aporte que crece tu ahorro pensional.",
+      "parts": {
+        "employer": "Aporte del empleador",
+        "employee": "Tu aporte"
+      },
+      "helper": "No lo ves en efectivo hoy, pero se acumula en tu fondo de pensión."
+    },
     "bar": {
       "net": "Tú recibes",
       "deductions": "Tus descuentos",

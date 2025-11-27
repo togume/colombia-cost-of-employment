@@ -182,6 +182,15 @@
       "subhead": "Cash in hand plus accrued benefits.",
       "helper": "Cash: {cash} + benefits: {benefits}"
     },
+    "pension": {
+      "title": "Your monthly pension contribution",
+      "subhead": "Combined employer and your contribution that grows your retirement balance.",
+      "parts": {
+        "employer": "Employer portion",
+        "employee": "Your portion"
+      },
+      "helper": "You don’t see this as cash today, but it accrues to your pension balance."
+    },
     "bar": {
       "net": "You take home",
       "deductions": "Your deductions",

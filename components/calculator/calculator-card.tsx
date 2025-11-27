@@ -824,6 +824,12 @@ function ShareableSnapshot({
     amount: item.amount,
   }));
 
+  const employerPensionContribution =
+    contributions.find((item) => item.id === "pension")?.amount ?? 0;
+  const employeePensionContribution =
+    summary.employeeDeductions.find((item) => item.id === "pension_employee")?.amount ?? 0;
+  const totalPensionContribution = employerPensionContribution + employeePensionContribution;
+
   return (
     <section className="rounded-3xl border border-neutral-200 bg-white/90 p-6 shadow-md dark:border-neutral-800 dark:bg-neutral-900/60 sm:p-8">
       <div className="space-y-2">
@@ -939,6 +945,32 @@ function ShareableSnapshot({
             benefits: formatMoney(summary.accrualsMonthly),
           })}
         </p>
+      </div>
+
+      {/* Pension contributions */}
+      <div className="mt-5 rounded-3xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-emerald-50/60 px-5 py-6 shadow-sm dark:border-cyan-900 dark:from-cyan-950/40 dark:to-emerald-950/30">
+        <p className="text-xs font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
+          {snapshotT("pension.title")}
+        </p>
+        <p className="mt-1 text-sm text-cyan-800 dark:text-cyan-200">{snapshotT("pension.subhead")}</p>
+        <p className="mt-4 text-3xl font-bold text-neutral-900 dark:text-neutral-50">
+          {formatMoney(totalPensionContribution)}
+        </p>
+        <div className="mt-4 rounded-2xl border border-cyan-200 bg-white/80 p-4 text-sm text-neutral-800 shadow-sm dark:border-cyan-800 dark:bg-neutral-900/80 dark:text-neutral-200">
+          <ul className="space-y-2">
+            <li className="flex items-center justify-between gap-3">
+              <span>{snapshotT("pension.parts.employer")}</span>
+              <span className="font-semibold">{formatMoney(employerPensionContribution)}</span>
+            </li>
+            <li className="flex items-center justify-between gap-3">
+              <span>{snapshotT("pension.parts.employee")}</span>
+              <span className="font-semibold">{formatMoney(employeePensionContribution)}</span>
+            </li>
+          </ul>
+          <p className="mt-3 text-xs text-neutral-600 dark:text-neutral-400">
+            {snapshotT("pension.helper")}
+          </p>
+        </div>
       </div>
 
       {/* Employer costs (demoted) */}
