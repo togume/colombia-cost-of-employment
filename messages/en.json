@@ -142,11 +142,17 @@
     }
   },
   "snapshot": {
-    "title": "Shareable snapshot",
-    "subtitle": "Screenshot this card to align expectations with candidates and employees.",
+    "title": "Income snapshot",
+    "subtitle": "Show the full value of the offer from the employee’s perspective.",
     "hero": {
       "label": "Your monthly paycheck",
       "context": "Salary {salary} + transport {transport} − deductions {deductions}"
+    },
+    "cash": {
+      "title": "Your monthly available cash",
+      "subhead": "What hits your bank account.",
+      "toggleShow": "See calculation details",
+      "toggleHide": "Hide calculation details"
     },
     "flow": {
       "title": "How we got this amount",
@@ -159,6 +165,23 @@
       },
       "netLabel": "Net in your bank account"
     },
+    "benefits": {
+      "title": "Monthly value of your annual benefits",
+      "subhead": "Money accruing for Prima, Severance, and Vacation. Does NOT include social security taxes.",
+      "note": "Saved monthly for your mid-year and year-end payments.",
+      "frequency": "Paid in lump sums: Prima (Jun & Dec), Cesantías/Intereses (Feb), Vacations (when taken).",
+      "items": {
+        "prima": "Prima bonus (accrued)",
+        "cesantias": "Severance (accrued)",
+        "intereses_cesantias": "Severance interest (accrued)",
+        "vacaciones": "Vacation (accrued)"
+      }
+    },
+    "total": {
+      "title": "Your total effective monthly income",
+      "subhead": "Cash in hand plus accrued benefits.",
+      "helper": "Cash: {cash} + benefits: {benefits}"
+    },
     "bar": {
       "net": "You take home",
       "deductions": "Your deductions",
@@ -169,6 +192,7 @@
       "pension_employee": "4% Pensión employee contribution"
     },
     "employer": {
+      "toggle": "View the employer’s social security contributions",
       "additionalTitle": "What your employer pays (you don’t see this)",
       "additionalSubtitle": "Money your company transfers to benefits and reserves on top of your deposit.",
       "perMonth": "per month",

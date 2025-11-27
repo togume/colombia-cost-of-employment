@@ -4,14 +4,20 @@
     "description": "Calcula el costo mensual y anual total de contratar en Colombia con contexto legal en tiempo real."
   },
   "snapshot": {
-    "title": "Resumen para compartir",
-    "subtitle": "Toma un pantallazo de esta tarjeta para alinear expectativas con talento y colaboradores.",
+    "title": "Resumen de ingresos",
+    "subtitle": "Muestra el valor total de la oferta desde la perspectiva del empleado.",
     "hero": {
       "label": "Tu ingreso mensual",
       "context": "Salario {salary} + transporte {transport} − descuentos {deductions}"
     },
+    "cash": {
+      "title": "Tu dinero disponible cada mes",
+      "subhead": "Lo que llega a tu cuenta bancaria.",
+      "toggleShow": "Ver detalles del cálculo",
+      "toggleHide": "Ocultar detalles del cálculo"
+    },
     "flow": {
-      "title": "Cómo llegamos a este valor",
+      "title": "Cómo se calcula este valor",
       "grossLabel": "Pago mensual bruto",
       "grossDetail": "Salario {salary} + transporte {transport}",
       "deductionsLabel": "Tus descuentos",
@@ -20,6 +26,23 @@
         "hide": "Ocultar detalles"
       },
       "netLabel": "Recibes en tu cuenta"
+    },
+    "benefits": {
+      "title": "Valor mensual de tus beneficios anuales",
+      "subhead": "Dinero que acumulas para Prima, Cesantías y Vacaciones. NO incluye seguridad social.",
+      "note": "La empresa reserva este valor cada mes para tus pagos de mitad y fin de año.",
+      "frequency": "Se pagan en montos concentrados: Prima (junio y diciembre), Cesantías/Intereses (febrero), Vacaciones (al tomarse).",
+      "items": {
+        "prima": "Prima de servicios (acumulado)",
+        "cesantias": "Cesantías (acumulado)",
+        "intereses_cesantias": "Intereses de cesantías (acumulado)",
+        "vacaciones": "Vacaciones (acumulado)"
+      }
+    },
+    "total": {
+      "title": "Tu ingreso mensual efectivo total",
+      "subhead": "Dinero en mano más prestaciones acumuladas.",
+      "helper": "Disponible: {cash} + beneficios: {benefits}"
     },
     "bar": {
       "net": "Tú recibes",
@@ -31,6 +54,7 @@
       "pension_employee": "4% Pensión (aporte empleado)"
     },
     "employer": {
+      "toggle": "Ver aportes de seguridad social del empleador",
       "additionalTitle": "Lo que paga la empresa (no llega a tu cuenta)",
       "additionalSubtitle": "Dinero que la empresa destina a aportes y provisiones además de tu consignación.",
       "perMonth": "mensual",
