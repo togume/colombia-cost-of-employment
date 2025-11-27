@@ -193,8 +193,8 @@
     },
     "employer": {
       "toggle": "View the employer’s social security contributions",
-      "additionalTitle": "What your employer pays (you don’t see this)",
-      "additionalSubtitle": "Money your company transfers to benefits and reserves on top of your deposit.",
+      "additionalTitle": "What your employer pays (social security + your deferred benefits)",
+      "additionalSubtitle": "Includes your future payouts (prima, severance, vacation) plus mandatory social security that doesn’t go to your bank each month.",
       "perMonth": "per month",
       "includes": "This includes:",
       "list": {

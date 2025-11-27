@@ -55,8 +55,8 @@
     },
     "employer": {
       "toggle": "Ver aportes de seguridad social del empleador",
-      "additionalTitle": "Lo que paga la empresa (no llega a tu cuenta)",
-      "additionalSubtitle": "Dinero que la empresa destina a aportes y provisiones además de tu consignación.",
+      "additionalTitle": "Lo que paga la empresa (seguridad social + tus beneficios diferidos)",
+      "additionalSubtitle": "Incluye tus pagos futuros (prima, cesantías, vacaciones) y los aportes obligatorios que no entran a tu cuenta cada mes.",
       "perMonth": "mensual",
       "includes": "Esto incluye:",
       "list": {
