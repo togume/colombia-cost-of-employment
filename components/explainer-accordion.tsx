@@ -27,7 +27,7 @@ export function ExplainerAccordion() {
           {titleT("title")}
         </h2>
         <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-          Learn more about Colombian employment costs
+          {titleT("subtitle")}
         </p>
       </div>
       <div className="space-y-3">

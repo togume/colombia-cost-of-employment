@@ -159,6 +159,12 @@ export function computeEmployerCosts(
   const exonerationApplies =
     input.exoneration && contributionBase < 10 * input.smmlv;
 
+  const pensionEmployerAmount = rates.contrib.pension_employer * contributionBase;
+  const pensionEmployeeAmount = rates.employee.pension_employee * contributionBase;
+  const pensionCashToEmployee = input.employeePensionContribution
+    ? pensionEmployerAmount + pensionEmployeeAmount
+    : 0;
+
   const contributions: BreakdownItem[] = [
     {
       id: "salud",
@@ -168,7 +174,7 @@ export function computeEmployerCosts(
     },
     {
       id: "pension",
-      amount: rates.contrib.pension_employer * contributionBase,
+      amount: input.employeePensionContribution ? 0 : pensionEmployerAmount,
     },
     {
       id: "arl",
@@ -216,13 +222,13 @@ export function computeEmployerCosts(
   const employeeDeductionsRaw: Array<{ id: EmployeeDeductionId; amount: number }> = [
     {
       id: "salud_employee",
-      amount: rates.employee.salud_employee * salary,
+      amount: rates.employee.salud_employee * contributionBase,
     },
   ];
-  if (input.employeePensionContribution) {
+  if (!input.employeePensionContribution) {
     employeeDeductionsRaw.push({
       id: "pension_employee",
-      amount: rates.employee.pension_employee * salary,
+      amount: pensionEmployeeAmount,
     });
   }
 
@@ -232,10 +238,10 @@ export function computeEmployerCosts(
   }));
 
   const employeeDeductionsTotal = employeeDeductions.reduce((sum, item) => sum + item.amount, 0);
-  const employeeGrossTransfer = salary + transportEligible;
+  const employeeGrossTransfer = salary + transportEligible + pensionCashToEmployee;
   const employeeNetMonthly = Math.max(0, employeeGrossTransfer - employeeDeductionsTotal);
 
-  const monthlyOutOfPocket = salary + transportEligible + contributionsTotal;
+  const monthlyOutOfPocket = salary + transportEligible + contributionsTotal + pensionCashToEmployee;
   const monthlyTotal = monthlyOutOfPocket + accrualsTotal;
   const annualTotal = monthlyTotal * 12;
 
@@ -319,16 +325,21 @@ export function computeSalaryFromBudget(
   const arlRate = rates.contrib.arl[input.arlClass];
   const transportAmount = rates.aux_transporte;
 
+  const employerPensionContributionRate = input.employeePensionContribution ? 0 : rates.contrib.pension_employer;
+  const pensionCashRate = input.employeePensionContribution
+    ? rates.contrib.pension_employer + rates.employee.pension_employee
+    : 0;
+
   const contribRateWithoutExoneration =
     rates.contrib.salud_employer +
-    rates.contrib.pension_employer +
+    employerPensionContributionRate +
     rates.contrib.caja +
     rates.contrib.sena +
     rates.contrib.icbf +
     arlRate;
 
   const contribRateWithExoneration =
-    rates.contrib.pension_employer + rates.contrib.caja + arlRate;
+    employerPensionContributionRate + rates.contrib.caja + arlRate;
 
   const accrualSalaryRate =
     rates.accruals.prima +
@@ -358,7 +369,7 @@ export function computeSalaryFromBudget(
   if (transportAmount > 0) {
     const contribRate =
       input.exoneration ? contribRateWithExoneration : contribRateWithoutExoneration;
-    const denominator = 1 + contribRate + accrualSalaryRate;
+    const denominator = 1 + contribRate + accrualSalaryRate + pensionCashRate;
     const numerator = input.targetMonthlyCost - transportAmount * (1 + accrualTransportRate);
 
     if (denominator > 0) {
@@ -371,7 +382,7 @@ export function computeSalaryFromBudget(
 
   // Case 2: Salary between transport threshold and exoneration threshold (if exoneration applies)
   if (input.exoneration) {
-    const denominator = 1 + contribRateWithExoneration + accrualSalaryRate;
+    const denominator = 1 + contribRateWithExoneration + accrualSalaryRate + pensionCashRate;
     if (denominator > 0) {
       const salaryWithExoneration = input.targetMonthlyCost / denominator;
       if (
@@ -385,7 +396,7 @@ export function computeSalaryFromBudget(
 
   // Case 3: Salary above exoneration threshold OR exoneration disabled
   {
-    const denominator = 1 + contribRateWithoutExoneration + accrualSalaryRate;
+    const denominator = 1 + contribRateWithoutExoneration + accrualSalaryRate + pensionCashRate;
     if (denominator > 0) {
       const salaryWithoutExoneration = input.targetMonthlyCost / denominator;
       const lowerBound = input.exoneration ? 10 * input.smmlv : 0;

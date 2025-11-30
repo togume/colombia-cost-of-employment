@@ -8,7 +8,8 @@
     "subtitle": "Muestra el valor total de la oferta desde la perspectiva del empleado.",
     "hero": {
       "label": "Tu ingreso mensual",
-      "context": "Salario {salary} + transporte {transport} − descuentos {deductions}"
+      "context": "Salario {salary} + transporte {transport} − descuentos {deductions}",
+      "contextWithPension": "Salario {salary} + transporte {transport} + pensión en efectivo {pension} − descuentos {deductions}"
     },
     "cash": {
       "title": "Tu dinero disponible cada mes",
@@ -20,6 +21,7 @@
       "title": "Cómo se calcula este valor",
       "grossLabel": "Pago mensual bruto",
       "grossDetail": "Salario {salary} + transporte {transport}",
+      "grossDetailWithPension": "Salario {salary} + transporte {transport} + pensión en efectivo {pension}",
       "deductionsLabel": "Tus descuentos",
       "toggle": {
         "show": "Ver detalles de {count} descuentos",
@@ -312,6 +314,7 @@
   },
   "explainer": {
     "title": "Cómo se compone el costo laboral",
+    "subtitle": "Aprende más sobre los costos de empleo en Colombia.",
     "sections": {
       "contributions": {
         "title": "Aportes (pago mensual)",

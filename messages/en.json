@@ -146,7 +146,8 @@
     "subtitle": "Show the full value of the offer from the employee’s perspective.",
     "hero": {
       "label": "Your monthly paycheck",
-      "context": "Salary {salary} + transport {transport} − deductions {deductions}"
+      "context": "Salary {salary} + transport {transport} − deductions {deductions}",
+      "contextWithPension": "Salary {salary} + transport {transport} + pension cash {pension} − deductions {deductions}"
     },
     "cash": {
       "title": "Your monthly available cash",
@@ -158,6 +159,7 @@
       "title": "How we got this amount",
       "grossLabel": "Gross monthly pay",
       "grossDetail": "Salary {salary} + transport {transport}",
+      "grossDetailWithPension": "Salary {salary} + transport {transport} + pension cash {pension}",
       "deductionsLabel": "Your deductions",
       "toggle": {
         "show": "See {count} deduction details",
@@ -312,6 +314,7 @@
   },
   "explainer": {
     "title": "How employer costs are built",
+    "subtitle": "Learn more about Colombian employment costs.",
     "sections": {
       "contributions": {
         "title": "Contributions (paid monthly)",

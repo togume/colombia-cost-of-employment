@@ -133,7 +133,8 @@ export function computeLiquidation(
 
   const monthStart = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
   const salaryPeriodStart = startDate > monthStart ? startDate : monthStart;
-  const daysInFinalPeriod = clampPositive(diffInDaysInclusive(salaryPeriodStart, endDate));
+  const rawDaysInFinalPeriod = clampPositive(diffInDaysInclusive(salaryPeriodStart, endDate));
+  const daysInFinalPeriod = Math.min(30, rawDaysInFinalPeriod);
   const dailySalary = salary / 30;
   const outstandingSalary = dailySalary * daysInFinalPeriod;
 

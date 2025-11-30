@@ -242,7 +242,7 @@ export function CalculatorCard() {
               {calculatorT("mode.employeeSalary")}
             </h2>
             <div className="mt-4 text-3xl font-bold text-green-900 dark:text-green-100 sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
-              {formatMoney(calculation.salaryBase)}
+              {formatMoney(calculation.summary.employeeNetMonthly)}
             </div>
             <p className="mt-4 text-base text-green-700 dark:text-green-300">
               {calculatorT("mode.employeeSalaryDescription")}
@@ -795,7 +795,8 @@ function ShareableSnapshot({
     amount: item.amount,
   }));
 
-  const incomeTotal = salaryBase + transportAmount;
+  const pensionCash = Math.max(0, summary.employeeGrossTransfer - salaryBase - transportAmount);
+  const incomeTotal = salaryBase + transportAmount + pensionCash;
   const deductionTotal = deductionRows.reduce((sum, row) => sum + row.amount, 0);
   const employerAgencyIds: ContributionId[] = ["salud", "pension", "arl", "caja"];
   const parafiscalesIds: ContributionId[] = ["sena", "icbf"];
@@ -810,11 +811,31 @@ function ShareableSnapshot({
   const contributionsTotal = contributions.reduce((sum, item) => sum + item.amount, 0);
   const employerHiddenMonthly = contributionsTotal + summary.accrualsMonthly;
 
-  const heroContext = snapshotT("hero.context", {
-    salary: formatMoney(salaryBase),
-    transport: formatMoney(transportAmount),
-    deductions: formatMoney(deductionTotal),
-  });
+  const heroContext =
+    pensionCash > 0
+      ? snapshotT("hero.contextWithPension", {
+          salary: formatMoney(salaryBase),
+          transport: formatMoney(transportAmount),
+          pension: formatMoney(pensionCash),
+          deductions: formatMoney(deductionTotal),
+        })
+      : snapshotT("hero.context", {
+          salary: formatMoney(salaryBase),
+          transport: formatMoney(transportAmount),
+          deductions: formatMoney(deductionTotal),
+        });
+
+  const grossHelper =
+    pensionCash > 0
+      ? snapshotT("flow.grossDetailWithPension", {
+          salary: formatMoney(salaryBase),
+          transport: formatMoney(transportAmount),
+          pension: formatMoney(pensionCash),
+        })
+      : snapshotT("flow.grossDetail", {
+          salary: formatMoney(salaryBase),
+          transport: formatMoney(transportAmount),
+        });
 
   const effectiveMonthly = summary.employeeNetMonthly + summary.accrualsMonthly;
 
@@ -862,10 +883,7 @@ function ShareableSnapshot({
               variant="plus"
               label={snapshotT("flow.grossLabel")}
               amount={formatMoney(incomeTotal)}
-              helper={snapshotT("flow.grossDetail", {
-                salary: formatMoney(salaryBase),
-                transport: formatMoney(transportAmount),
-              })}
+              helper={grossHelper}
             />
             <FlowRow
               variant="minus"

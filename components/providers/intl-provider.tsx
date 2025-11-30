@@ -10,12 +10,20 @@ import {
   type ReactNode,
 } from "react";
 import { NextIntlClientProvider } from "next-intl";
+import enMessages from "@/messages/en.json";
+import esMessages from "@/messages/es.json";
 
 const STORAGE_KEY = "cec-locale";
+const DEFAULT_TIME_ZONE = "America/Bogota";
 
 const SUPPORTED_LOCALES = ["en", "es"] as const;
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
+
+const MESSAGES: Record<SupportedLocale, Record<string, unknown>> = {
+  en: enMessages,
+  es: esMessages,
+};
 
 interface LocaleContextValue {
   locale: SupportedLocale;
@@ -25,16 +33,6 @@ interface LocaleContextValue {
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
-
-async function loadMessages(locale: SupportedLocale): Promise<Record<string, unknown>> {
-  switch (locale) {
-    case "es":
-      return (await import("@/messages/es.json")).default;
-    case "en":
-    default:
-      return (await import("@/messages/en.json")).default;
-  }
-}
 
 function detectInitialLocale(): SupportedLocale {
   if (typeof window === "undefined") {
@@ -59,27 +57,13 @@ interface IntlProviderWrapperProps {
 }
 
 export function IntlProviderWrapper({ children }: IntlProviderWrapperProps) {
-  const [locale, setLocaleState] = useState<SupportedLocale>(() => detectInitialLocale());
-  const [messages, setMessages] = useState<Record<string, unknown> | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const initialLocale = detectInitialLocale();
+  const [locale, setLocaleState] = useState<SupportedLocale>(initialLocale);
+  const [messages, setMessages] = useState<Record<string, unknown>>(MESSAGES[initialLocale]);
+  const [isLoading] = useState(false);
 
   useEffect(() => {
-    let isActive = true;
-    loadMessages(locale)
-      .then((loaded) => {
-        if (!isActive) return;
-        setMessages(loaded);
-        setIsLoading(false);
-      })
-      .catch(() => {
-        if (!isActive) return;
-        setMessages({});
-        setIsLoading(false);
-      });
-
-    return () => {
-      isActive = false;
-    };
+    setMessages(MESSAGES[locale]);
   }, [locale]);
 
   useEffect(() => {
@@ -87,7 +71,6 @@ export function IntlProviderWrapper({ children }: IntlProviderWrapperProps) {
       if (event.key === STORAGE_KEY && typeof event.newValue === "string") {
         const newLocale = event.newValue as SupportedLocale;
         if (SUPPORTED_LOCALES.includes(newLocale)) {
-          setIsLoading(true);
           setLocaleState(newLocale);
         }
       }
@@ -106,7 +89,6 @@ export function IntlProviderWrapper({ children }: IntlProviderWrapperProps) {
   }, [locale]);
 
   const setLocale = useCallback((nextLocale: SupportedLocale) => {
-    setIsLoading(true);
     setLocaleState(nextLocale);
     if (typeof window !== "undefined") {
       window.localStorage.setItem(STORAGE_KEY, nextLocale);
@@ -123,19 +105,9 @@ export function IntlProviderWrapper({ children }: IntlProviderWrapperProps) {
     [locale, setLocale, isLoading],
   );
 
-  if (!messages) {
-    return (
-      <LocaleContext.Provider value={contextValue}>
-        <div className="flex min-h-screen items-center justify-center text-sm text-neutral-500">
-          Loading…
-        </div>
-      </LocaleContext.Provider>
-    );
-  }
-
   return (
     <LocaleContext.Provider value={contextValue}>
-      <NextIntlClientProvider locale={locale} messages={messages}>
+      <NextIntlClientProvider locale={locale} messages={messages} timeZone={DEFAULT_TIME_ZONE}>
         {children}
       </NextIntlClientProvider>
     </LocaleContext.Provider>
