@@ -91,7 +91,7 @@
     "spanish": "Español"
   },
   "hero": {
-    "badge": "Colombia 2025",
+    "badge": "Colombia 2026",
     "title": "Entiende el costo real de contratar en Colombia.",
     "subtitle": "Modela escenarios salariales, revisa los aportes obligatorios y alinea cifras con finanzas, RR. HH. y líderes."
   },
@@ -171,6 +171,9 @@
     "empty": "No hay elementos en esta categoría."
   },
   "calculator": {
+    "yearSelector": {
+      "label": "Año de tarifas"
+    },
     "resetButton": {
       "label": "Restablecer al SMMLV",
       "title": "Restablecer el salario al salario mínimo vigente"
@@ -327,6 +330,116 @@
       "integral": {
         "title": "Salario integral",
         "body": "El salario integral combina el básico más un 30% de factor prestacional. Debe ser mínimo 13× SMMLV. Las prestaciones ya están incluidas, pero los aportes (Pensión, ARL, Caja y cuando aplique Salud/SENA/ICBF) siguen vigentes."
+      }
+    }
+  },
+  "dayWorker": {
+    "badge": "Trabajo por días",
+    "title": "Calculadora de costo por día",
+    "subtitle": "Calcula la tarifa diaria todo incluido para contratar trabajadores por días basado en el salario mínimo.",
+    "allInRate": {
+      "label": "Tarifa diaria todo incluido (salario mínimo)",
+      "perDay": "/día",
+      "description": "Esto es {percent}% sobre el salario diario base — el costo real del trabajo por días legal.",
+      "withExoneration": "Con exoneración (típico)",
+      "withoutExoneration": "Sin exoneración"
+    },
+    "breakdown": {
+      "title": "Desglose de la tarifa diaria",
+      "basePay": {
+        "title": "Pago base",
+        "wage": "Salario diario (SMMLV ÷ 30)",
+        "transport": "Auxilio de transporte (diario)",
+        "subtotal": "Efectivo al trabajador"
+      },
+      "contributions": {
+        "title": "Aportes del empleador",
+        "note": "Calculados sobre el salario base (no incluye transporte)",
+        "pension": "Pensión (12%)",
+        "arl": "ARL Clase I (0,522%)",
+        "caja": "Caja de compensación (4%)",
+        "salud": "Salud (8,5%)",
+        "sena": "SENA (2%)",
+        "icbf": "ICBF (3%)",
+        "subtotalExonerated": "Subtotal (con exoneración)",
+        "nonExoneratedNote": "Sin exoneración, agregar estos:"
+      },
+      "accruals": {
+        "title": "Prestaciones (proporcionales)",
+        "note": "Prima y cesantías incluyen transporte en la base",
+        "prima": "Prima (8,33%)",
+        "cesantias": "Cesantías (8,33%)",
+        "intereses": "Intereses cesantías (1%)",
+        "vacaciones": "Vacaciones (4,17%)",
+        "subtotal": "Subtotal prestaciones"
+      }
+    },
+    "legalWay": {
+      "title": "La forma legal de contratar por días",
+      "description": "Puedes contratar formalmente trabajadores por días y pagar prestaciones proporcionales. Así funciona:",
+      "steps": {
+        "register": "Registra al trabajador en su EPS (salud) y AFP (pensión) — ellos eligen cuáles.",
+        "pila": "Paga seguridad social mensualmente vía PILA, aunque solo trabaje algunos días.",
+        "accruals": "Lleva registro de las prestaciones (prima, cesantías, vacaciones) y págalas cuando corresponda.",
+        "pay": "Paga el salario diario + transporte cada día trabajado."
+      },
+      "minimumNote": "Importante: La base mínima de cotización para seguridad social es 1 SMMLV completo por mes, sin importar los días trabajados. Esto afecta significativamente a trabajadores por días de baja frecuencia."
+    },
+    "riskAnalysis": {
+      "title": "Pago en efectivo informal: riesgos vs realidad",
+      "subtitle": "Lo que dice la ley colombiana vs. lo que realmente pasa",
+      "legal": {
+        "title": "El marco legal",
+        "description": "La ley laboral colombiana usa la \"primacía de la realidad\". Si existen tres elementos, es una relación laboral por ley:",
+        "element1": "Prestación personal del servicio — la persona hace el trabajo por sí misma",
+        "element2": "Subordinación — tú diriges qué, cuándo o cómo trabaja",
+        "element3": "Remuneración — le pagas",
+        "consequence": "Si estos elementos existen, es empleo — sin importar cómo lo llames o si hay contrato escrito."
+      },
+      "risks": {
+        "title": "Los riesgos del pago informal",
+        "workerClaim": {
+          "title": "El trabajador reclama relación laboral",
+          "description": "Puede demandar hasta 3 años de prestaciones: prima, cesantías, vacaciones, y aportes de seguridad social no pagados."
+        },
+        "ugpp": {
+          "title": "Auditoría de la UGPP",
+          "description": "La autoridad de pensiones/salud puede liquidar aportes de seguridad social retroactivos más intereses y multas significativas."
+        },
+        "injury": {
+          "title": "Accidente de trabajo",
+          "description": "Sin cobertura de ARL, eres responsable de todos los costos médicos, pagos por incapacidad, y potencialmente beneficios por muerte. Esto se vuelve costoso rápidamente."
+        },
+        "inspection": {
+          "title": "Inspección laboral",
+          "description": "El Ministerio del Trabajo puede imponer multas por violaciones a la ley laboral, incluyendo no pago de prestaciones."
+        }
+      },
+      "reality": {
+        "title": "La realidad práctica",
+        "description": "A pesar del marco legal, el trabajo informal es extremadamente común en Colombia:",
+        "point1": "~58% de los trabajadores colombianos están en el sector informal",
+        "point2": "El trabajo por días en efectivo es común en trabajo doméstico, construcción, agricultura y pequeños negocios",
+        "point3": "La aplicación de la ley es inconsistente, pero la tendencia es hacia más formalización y auditorías"
+      },
+      "alternatives": {
+        "title": "Alternativas legales",
+        "contractor": {
+          "title": "Contratista independiente (Prestación de servicios)",
+          "description": "Solo válido si: no hay subordinación (decide cómo/cuándo), puede trabajar para otros, provee sus propias herramientas, y maneja su propia seguridad social."
+        },
+        "formal": {
+          "title": "Empleo formal por días",
+          "description": "Registrar en PILA, pagar prestaciones proporcionales y cumplir con la ley laboral. La tarifa diaria mostrada arriba incluye todos los costos."
+        },
+        "platform": {
+          "title": "Cooperativas o plataformas",
+          "description": "Algunos servicios manejan el cumplimiento para trabajadores domésticos o jornaleros — ellos se convierten en el empleador formal."
+        }
+      },
+      "bottomLine": {
+        "title": "En resumen",
+        "description": "Pagar efectivo \"todo incluido\" sin formalización es común pero ilegal, y riesgoso si el trabajador se lesiona, presenta una queja, o si te auditan. Para trabajo por días regular, la formalización es el enfoque más seguro. Para trabajo verdaderamente ocasional e independiente, un contrato de prestación de servicios puede ser defendible."
       }
     }
   },

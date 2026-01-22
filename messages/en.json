@@ -9,7 +9,7 @@
     "spanish": "Español"
   },
   "hero": {
-    "badge": "Colombia 2025",
+    "badge": "Colombia 2026",
     "title": "Understand the true cost of hiring in Colombia.",
     "subtitle": "Model salary scenarios, see mandatory employer contributions, and share aligned figures with finance, HR, and leadership."
   },
@@ -89,6 +89,9 @@
     "empty": "No items in this category."
   },
   "calculator": {
+    "yearSelector": {
+      "label": "Rate Year"
+    },
     "resetButton": {
       "label": "Reset to SMMLV",
       "title": "Reset salary to the current minimum wage"
@@ -327,6 +330,116 @@
       "integral": {
         "title": "Salario integral",
         "body": "Integral salary combines base pay plus a 30% factor prestacional. It must be at least 13× SMMLV. Prestaciones are built in, but contributions (Pensión, ARL, Caja, Salud/SENA/ICBF when applicable) remain due."
+      }
+    }
+  },
+  "dayWorker": {
+    "badge": "Day Workers",
+    "title": "Day Worker Cost Calculator",
+    "subtitle": "Calculate the all-in daily rate for hiring day workers (trabajadores por días) based on minimum wage.",
+    "allInRate": {
+      "label": "All-in daily rate (minimum wage)",
+      "perDay": "/day",
+      "description": "This is {percent}% above the base daily wage — the true cost of legal day-labor.",
+      "withExoneration": "With exoneration (typical)",
+      "withoutExoneration": "Without exoneration"
+    },
+    "breakdown": {
+      "title": "Daily rate breakdown",
+      "basePay": {
+        "title": "Base pay",
+        "wage": "Daily wage (SMMLV ÷ 30)",
+        "transport": "Transport subsidy (daily)",
+        "subtotal": "Cash to worker"
+      },
+      "contributions": {
+        "title": "Employer contributions",
+        "note": "Calculated on base wage only (not transport)",
+        "pension": "Pensión (12%)",
+        "arl": "ARL Class I (0.522%)",
+        "caja": "Caja de compensación (4%)",
+        "salud": "Salud (8.5%)",
+        "sena": "SENA (2%)",
+        "icbf": "ICBF (3%)",
+        "subtotalExonerated": "Subtotal (with exoneration)",
+        "nonExoneratedNote": "Without exoneration, add these:"
+      },
+      "accruals": {
+        "title": "Accruals (proportional)",
+        "note": "Prima and cesantías include transport in the base",
+        "prima": "Prima (8.33%)",
+        "cesantias": "Cesantías (8.33%)",
+        "intereses": "Intereses cesantías (1%)",
+        "vacaciones": "Vacaciones (4.17%)",
+        "subtotal": "Subtotal accruals"
+      }
+    },
+    "legalWay": {
+      "title": "The legal way to hire day workers",
+      "description": "You can formally hire day workers and pay proportional benefits. Here's how:",
+      "steps": {
+        "register": "Register the worker with their EPS (health) and AFP (pension) — they choose which ones.",
+        "pila": "Pay social security monthly via PILA, even if they only work a few days.",
+        "accruals": "Track accrued benefits (prima, cesantías, vacaciones) and pay them when due.",
+        "pay": "Pay the daily wage + transport each day worked."
+      },
+      "minimumNote": "Important: The minimum contribution base for social security is 1 full SMMLV per month, regardless of days worked. This affects low-frequency day workers significantly."
+    },
+    "riskAnalysis": {
+      "title": "Informal cash payment: risks vs reality",
+      "subtitle": "What Colombian law says vs. what actually happens",
+      "legal": {
+        "title": "The legal framework",
+        "description": "Colombian labor law uses \"primacía de la realidad\" (primacy of reality). If three elements exist, it's an employment relationship by law:",
+        "element1": "Personal service — the person does the work themselves",
+        "element2": "Subordination — you direct what, when, or how they work",
+        "element3": "Remuneration — you pay them",
+        "consequence": "If these exist, it's employment — regardless of what you call it or whether there's a written contract."
+      },
+      "risks": {
+        "title": "The risks of informal payment",
+        "workerClaim": {
+          "title": "Worker claims employment",
+          "description": "Can sue for up to 3 years of back benefits: prima, cesantías, vacaciones, and unpaid social security contributions."
+        },
+        "ugpp": {
+          "title": "UGPP audit",
+          "description": "The pension/health authority can back-assess social security contributions plus interest and significant fines."
+        },
+        "injury": {
+          "title": "Work injury",
+          "description": "Without ARL coverage, you're liable for all medical costs, disability payments, and potentially death benefits. This gets expensive fast."
+        },
+        "inspection": {
+          "title": "Labor inspection",
+          "description": "Ministry of Labor can impose fines for labor law violations, including failure to pay benefits."
+        }
+      },
+      "reality": {
+        "title": "The practical reality",
+        "description": "Despite the legal framework, informal work is extremely common in Colombia:",
+        "point1": "~58% of Colombian workers are in the informal sector",
+        "point2": "Cash day-labor is widespread in domestic work, construction, agriculture, and small businesses",
+        "point3": "Enforcement is inconsistent, but the trend is toward more formalization and audits"
+      },
+      "alternatives": {
+        "title": "Legal alternatives",
+        "contractor": {
+          "title": "True independent contractor (Prestación de servicios)",
+          "description": "Only valid if: no subordination (they decide how/when), they can work for others, they provide their own tools, and they handle their own social security."
+        },
+        "formal": {
+          "title": "Formal day-worker employment",
+          "description": "Register in PILA, pay proportional benefits, and comply with labor law. The daily rate shown above includes all costs."
+        },
+        "platform": {
+          "title": "Cooperatives or platforms",
+          "description": "Some services handle compliance for domestic workers or day laborers — they become the formal employer."
+        }
+      },
+      "bottomLine": {
+        "title": "Bottom line",
+        "description": "Paying cash \"all-in\" without formalization is common but illegal, and risky if the worker gets injured, files a complaint, or if you get audited. For regular day work, formalization is the safest approach. For truly occasional, independent work, a service contract may be defensible."
       }
     }
   },

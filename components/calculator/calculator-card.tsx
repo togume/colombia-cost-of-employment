@@ -10,15 +10,11 @@ import {
   type AccrualId,
   type CalculationResult,
 } from "@/lib/calculator";
-import { DEFAULT_YEAR, getYearlyRates, type RiskClass } from "@/lib/rates";
+import { DEFAULT_YEAR, getYearlyRates, listAvailableYears, type RiskClass, type AvailableYear } from "@/lib/rates";
 import { formatCurrency, parseCurrencyInput, formatCurrencyInput } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type CalculatorMode = "forward" | "reverse";
-
-const rates = getYearlyRates(DEFAULT_YEAR);
-
-const DEFAULT_SALARY = String(rates.SMMLV);
 
 const CONTRIBUTION_IDS: ContributionId[] = [
   "salud",
@@ -46,8 +42,12 @@ export function CalculatorCard() {
   const contextT = useTranslations("context");
   const { locale } = useLocale();
 
+  const [selectedYear, setSelectedYear] = useState<AvailableYear>(DEFAULT_YEAR);
+  const rates = useMemo(() => getYearlyRates(selectedYear), [selectedYear]);
+  const availableYears = useMemo(() => listAvailableYears(), []);
+
   const [mode, setMode] = useState<CalculatorMode>("forward");
-  const [salaryInput, setSalaryInput] = useState<string>(DEFAULT_SALARY);
+  const [salaryInput, setSalaryInput] = useState<string>(String(rates.SMMLV));
   const [budgetInput, setBudgetInput] = useState<string>("");
   const [smmlvInput, setSmmlvInput] = useState<string>(String(rates.SMMLV));
   const [arlClass, setArlClass] = useState<RiskClass>("I");
@@ -55,6 +55,13 @@ export function CalculatorCard() {
   const [useIntegral, setUseIntegral] = useState(false);
   const [integralInput, setIntegralInput] = useState<string>("");
   const [withPensionDeduction, setWithPensionDeduction] = useState(false);
+
+  const handleYearChange = (year: AvailableYear) => {
+    setSelectedYear(year);
+    const newRates = getYearlyRates(year);
+    setSmmlvInput(String(newRates.SMMLV));
+    setSalaryInput(String(newRates.SMMLV));
+  };
 
   const salaryValue = useMemo(() => parseCurrencyInput(salaryInput), [salaryInput]);
   const budgetValue = useMemo(() => parseCurrencyInput(budgetInput), [budgetInput]);
@@ -97,6 +104,7 @@ export function CalculatorCard() {
     useIntegral,
     integralValue,
     withPensionDeduction,
+    rates,
   ]);
 
   const isValid = calculation.status === "valid";
@@ -135,6 +143,30 @@ export function CalculatorCard() {
 
   return (
     <section className="mx-auto w-full max-w-4xl space-y-8">
+      {/* Year Toggle */}
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+          {calculatorT("yearSelector.label")}
+        </span>
+        <div className="inline-flex rounded-2xl border border-neutral-300 bg-white p-1 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+          {availableYears.map((year) => (
+            <button
+              key={year}
+              type="button"
+              onClick={() => handleYearChange(year)}
+              className={cn(
+                "rounded-xl px-4 py-2 text-sm font-semibold transition-all",
+                selectedYear === year
+                  ? "bg-neutral-900 text-white shadow-md dark:bg-white dark:text-neutral-900"
+                  : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800",
+              )}
+            >
+              {year}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Mode Toggle */}
       <div className="flex justify-center">
         <div className="inline-flex rounded-2xl border border-neutral-300 bg-white p-1 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">

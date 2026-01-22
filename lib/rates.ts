@@ -1,6 +1,6 @@
 import rates from "@/config/rates.json";
 
-const DEFAULT_YEAR_VALUE = "2025" as const;
+const DEFAULT_YEAR_VALUE = "2026" as const;
 
 type RatesRecord = typeof rates;
 

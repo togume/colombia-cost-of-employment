@@ -1,6 +1,7 @@
 "use client";
 
 import { CalculatorCard } from "@/components/calculator/calculator-card";
+import { DayWorkerCard } from "@/components/day-worker/day-worker-card";
 import { ExplainerAccordion } from "@/components/explainer-accordion";
 import { LanguageToggle } from "@/components/language-toggle";
 import {
@@ -52,6 +53,7 @@ export default function Home() {
           <ExplainerAccordion />
         </div>
         <LiquidationCard />
+        <DayWorkerCard />
       </main>
 
       <footer className="border-t border-neutral-200 bg-gradient-to-br from-neutral-50 to-neutral-100/50 py-12 dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-950">
