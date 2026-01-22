@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { IntlProviderWrapper } from "@/components/providers/intl-provider";
+import { YearProviderWrapper } from "@/components/providers/year-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-gradient-to-br from-neutral-50 via-blue-50/10 to-neutral-100 antialiased dark:from-neutral-950 dark:via-blue-950/5 dark:to-neutral-900`}
       >
-        <IntlProviderWrapper>{children}</IntlProviderWrapper>
+        <IntlProviderWrapper>
+          <YearProviderWrapper>{children}</YearProviderWrapper>
+        </IntlProviderWrapper>
       </body>
     </html>
   );

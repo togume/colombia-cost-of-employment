@@ -90,6 +90,28 @@
     "english": "English",
     "spanish": "Español"
   },
+  "navigation": {
+    "employer": "Costo Empleador",
+    "liquidation": "Liquidación",
+    "dayworker": "Jornaleros",
+    "explainer": "Más Info"
+  },
+  "intro": {
+    "title": "¿Qué necesitas calcular?",
+    "subtitle": "Elige la calculadora que se ajuste a tu situación",
+    "hiring": {
+      "title": "Contratar un empleado",
+      "description": "Conoce el costo mensual y anual real incluyendo todos los aportes"
+    },
+    "termination": {
+      "title": "Terminar empleo",
+      "description": "Calcula cesantías, vacaciones y otros pagos finales"
+    },
+    "dayWorker": {
+      "title": "Trabajo por días",
+      "description": "Tarifa diaria todo incluido para trabajadores por días"
+    }
+  },
   "hero": {
     "badge": "Colombia 2026",
     "title": "Entiende el costo real de contratar en Colombia.",
@@ -336,7 +358,12 @@
   "dayWorker": {
     "badge": "Trabajo por días",
     "title": "Calculadora de costo por día",
-    "subtitle": "Calcula la tarifa diaria todo incluido para contratar trabajadores por días basado en el salario mínimo.",
+    "subtitle": "Calcula la tarifa diaria todo incluido para contratar trabajadores por días.",
+    "customWage": {
+      "label": "Salario base mensual",
+      "helper": "Ingresa un salario personalizado o deja vacío para usar el mínimo",
+      "reset": "Usar mínimo"
+    },
     "allInRate": {
       "label": "Tarifa diaria todo incluido (salario mínimo)",
       "perDay": "/día",

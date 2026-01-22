@@ -4,6 +4,9 @@ import { CalculatorCard } from "@/components/calculator/calculator-card";
 import { DayWorkerCard } from "@/components/day-worker/day-worker-card";
 import { ExplainerAccordion } from "@/components/explainer-accordion";
 import { LanguageToggle } from "@/components/language-toggle";
+import { YearToggle } from "@/components/year-toggle";
+import { SectionTabs } from "@/components/navigation/section-tabs";
+import { IntroSection } from "@/components/intro/intro-section";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -22,7 +25,7 @@ export default function Home() {
       <header className="relative overflow-hidden border-b border-neutral-200 bg-gradient-to-br from-white via-blue-50/30 to-yellow-50/20 pb-8 pt-5 backdrop-blur dark:border-neutral-800 dark:from-neutral-900 dark:via-blue-950/20 dark:to-yellow-950/10 sm:pb-10 sm:pt-6 md:pb-12 md:pt-7 lg:pb-14 lg:pt-8">
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-[0.015] dark:opacity-[0.02]" />
         <div className="relative mx-auto max-w-7xl space-y-6 px-4 sm:space-y-8 sm:px-6 md:space-y-10 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <NavigationMenu viewport={false}>
               <NavigationMenuList className="flex items-center gap-3">
                 <NavigationMenuItem>
@@ -34,7 +37,10 @@ export default function Home() {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-            <LanguageToggle />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <YearToggle />
+              <LanguageToggle />
+            </div>
           </div>
           <div className="mx-auto max-w-4xl space-y-3 text-center sm:space-y-4">
             <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-4xl md:text-5xl lg:text-6xl">
@@ -47,13 +53,26 @@ export default function Home() {
         </div>
       </header>
 
+      <SectionTabs />
+
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:gap-8 sm:px-6 sm:py-10 md:gap-10 md:py-12 lg:gap-12 lg:px-8">
-        <CalculatorCard />
-        <div className="mx-auto w-full max-w-4xl">
+        <IntroSection />
+
+        <div id="employer">
+          <CalculatorCard />
+        </div>
+
+        <div id="liquidation">
+          <LiquidationCard />
+        </div>
+
+        <div id="dayworker">
+          <DayWorkerCard />
+        </div>
+
+        <div id="explainer" className="mx-auto w-full max-w-4xl">
           <ExplainerAccordion />
         </div>
-        <LiquidationCard />
-        <DayWorkerCard />
       </main>
 
       <footer className="border-t border-neutral-200 bg-gradient-to-br from-neutral-50 to-neutral-100/50 py-12 dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-950">

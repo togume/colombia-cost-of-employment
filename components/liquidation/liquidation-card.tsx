@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useTranslations } from "@/hooks/use-translations";
 import { useLocale } from "@/hooks/use-locale";
-import { DEFAULT_YEAR, getYearlyRates, listAvailableYears, type AvailableYear } from "@/lib/rates";
+import { useYear } from "@/hooks/use-year";
 import { computeLiquidation, type LiquidationItemId } from "@/lib/liquidation";
 import {
   formatCurrency,
@@ -45,24 +45,22 @@ function parseISODate(value: string): Date | null {
 export function LiquidationCard() {
   const t = useTranslations("liquidation");
   const validationT = useTranslations("liquidation.validation");
-  const calculatorT = useTranslations("calculator");
   const { locale } = useLocale();
-
-  const [selectedYear, setSelectedYear] = useState<AvailableYear>(DEFAULT_YEAR);
-  const rates = useMemo(() => getYearlyRates(selectedYear), [selectedYear]);
-  const availableYears = useMemo(() => listAvailableYears(), []);
+  const { rates, subscribeToYearChange } = useYear();
 
   const [salaryInput, setSalaryInput] = useState<string>(String(rates.SMMLV));
   const [smmlvInput, setSmmlvInput] = useState<string>(String(rates.SMMLV));
   const [startDateInput, setStartDateInput] = useState<string>("");
   const [endDateInput, setEndDateInput] = useState<string>("");
 
-  const handleYearChange = (year: AvailableYear) => {
-    setSelectedYear(year);
-    const newRates = getYearlyRates(year);
-    setSmmlvInput(String(newRates.SMMLV));
-    setSalaryInput(String(newRates.SMMLV));
-  };
+  // Subscribe to year changes to update inputs
+  useEffect(() => {
+    const unsubscribe = subscribeToYearChange((_newYear, newRates) => {
+      setSalaryInput(String(newRates.SMMLV));
+      setSmmlvInput(String(newRates.SMMLV));
+    });
+    return unsubscribe;
+  }, [subscribeToYearChange]);
 
   const salaryValue = useMemo(() => parseCurrencyInput(salaryInput), [salaryInput]);
   const smmlvValue = useMemo(() => parseCurrencyInput(smmlvInput), [smmlvInput]);
@@ -97,30 +95,6 @@ export function LiquidationCard() {
 
   return (
     <section className="mx-auto w-full max-w-4xl space-y-8 rounded-3xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50/40 p-6 shadow-lg dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900/40 sm:p-8 md:p-10">
-      {/* Year Toggle */}
-      <div className="flex flex-col items-center gap-2">
-        <span className="text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-          {calculatorT("yearSelector.label")}
-        </span>
-        <div className="inline-flex rounded-2xl border border-neutral-300 bg-white p-1 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
-          {availableYears.map((year) => (
-            <button
-              key={year}
-              type="button"
-              onClick={() => handleYearChange(year)}
-              className={cn(
-                "rounded-xl px-4 py-2 text-sm font-semibold transition-all",
-                selectedYear === year
-                  ? "bg-neutral-900 text-white shadow-md dark:bg-white dark:text-neutral-900"
-                  : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800",
-              )}
-            >
-              {year}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <header className="space-y-2 text-center sm:space-y-3">
         <span className="inline-flex items-center rounded-full bg-blue-600/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-200">
           {t("badge")}

@@ -8,6 +8,28 @@
     "english": "English",
     "spanish": "Español"
   },
+  "navigation": {
+    "employer": "Employer Cost",
+    "liquidation": "Settlement",
+    "dayworker": "Day Workers",
+    "explainer": "Learn More"
+  },
+  "intro": {
+    "title": "What do you need to calculate?",
+    "subtitle": "Choose the calculator that fits your situation",
+    "hiring": {
+      "title": "Hiring an employee",
+      "description": "See the true monthly and annual cost including all contributions"
+    },
+    "termination": {
+      "title": "Ending employment",
+      "description": "Calculate severance, vacation, and other final payments"
+    },
+    "dayWorker": {
+      "title": "Day workers",
+      "description": "All-in daily rate for trabajadores por días"
+    }
+  },
   "hero": {
     "badge": "Colombia 2026",
     "title": "Understand the true cost of hiring in Colombia.",
@@ -336,7 +358,12 @@
   "dayWorker": {
     "badge": "Day Workers",
     "title": "Day Worker Cost Calculator",
-    "subtitle": "Calculate the all-in daily rate for hiring day workers (trabajadores por días) based on minimum wage.",
+    "subtitle": "Calculate the all-in daily rate for hiring day workers (trabajadores por días).",
+    "customWage": {
+      "label": "Monthly base salary",
+      "helper": "Enter a custom salary or leave empty for minimum wage",
+      "reset": "Use minimum"
+    },
     "allInRate": {
       "label": "All-in daily rate (minimum wage)",
       "perDay": "/day",

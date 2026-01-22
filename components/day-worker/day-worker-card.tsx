@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "@/hooks/use-translations";
 import { useLocale } from "@/hooks/use-locale";
-import { DEFAULT_YEAR, getYearlyRates, listAvailableYears, type AvailableYear } from "@/lib/rates";
-import { formatCurrency } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { useYear } from "@/hooks/use-year";
+import { getYearlyRates } from "@/lib/rates";
+import { formatCurrency, formatCurrencyInput, parseCurrencyInput } from "@/lib/format";
 
 interface DailyBreakdown {
   baseWage: number;
@@ -32,9 +32,15 @@ interface DailyBreakdown {
   markupPercent: number;
 }
 
-function calculateDailyBreakdown(rates: ReturnType<typeof getYearlyRates>): DailyBreakdown {
-  const baseWage = Math.round(rates.SMMLV / 30);
-  const transport = Math.round(rates.aux_transporte / 30);
+function calculateDailyBreakdown(
+  rates: ReturnType<typeof getYearlyRates>,
+  customMonthlyWage?: number | null
+): DailyBreakdown {
+  const monthlyBase = customMonthlyWage ?? rates.SMMLV;
+  const baseWage = Math.round(monthlyBase / 30);
+  // Transport is only included if salary <= 2x SMMLV
+  const includesTransport = monthlyBase <= rates.SMMLV * 2;
+  const transport = includesTransport ? Math.round(rates.aux_transporte / 30) : 0;
   const accrualBase = baseWage + transport;
 
   // Contributions (on base wage only)
@@ -88,49 +94,37 @@ function calculateDailyBreakdown(rates: ReturnType<typeof getYearlyRates>): Dail
 
 export function DayWorkerCard() {
   const t = useTranslations("dayWorker");
-  const calculatorT = useTranslations("calculator");
   const { locale } = useLocale();
+  const { rates } = useYear();
 
-  const [selectedYear, setSelectedYear] = useState<AvailableYear>(DEFAULT_YEAR);
-  const rates = useMemo(() => getYearlyRates(selectedYear), [selectedYear]);
-  const availableYears = useMemo(() => listAvailableYears(), []);
-  const breakdown = useMemo(() => calculateDailyBreakdown(rates), [rates]);
+  const [monthlyWageInput, setMonthlyWageInput] = useState<string>("");
+  const monthlyWageValue = useMemo(() => parseCurrencyInput(monthlyWageInput), [monthlyWageInput]);
+  const breakdown = useMemo(
+    () => calculateDailyBreakdown(rates, monthlyWageValue),
+    [rates, monthlyWageValue]
+  );
+  const isUsingCustomWage = monthlyWageValue !== null && monthlyWageValue > 0;
 
   const [showRiskAnalysis, setShowRiskAnalysis] = useState(false);
 
   const formatMoney = (value: number) => formatCurrency(value, locale, { maximumFractionDigits: 0 });
 
+  const handleWageInputChange = (value: string) => {
+    const cleaned = value.replace(/[^\d]/g, "");
+    setMonthlyWageInput(cleaned);
+  };
+
+  const resetToMinimum = () => {
+    setMonthlyWageInput("");
+  };
+
   return (
     <section className="mx-auto w-full max-w-4xl space-y-8 rounded-3xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50/40 p-6 shadow-lg dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900/40 sm:p-8 md:p-10">
-      {/* Year Toggle */}
-      <div className="flex flex-col items-center gap-2">
-        <span className="text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-          {calculatorT("yearSelector.label")}
-        </span>
-        <div className="inline-flex rounded-2xl border border-neutral-300 bg-white p-1 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
-          {availableYears.map((year) => (
-            <button
-              key={year}
-              type="button"
-              onClick={() => setSelectedYear(year)}
-              className={cn(
-                "rounded-xl px-4 py-2 text-sm font-semibold transition-all",
-                selectedYear === year
-                  ? "bg-neutral-900 text-white shadow-md dark:bg-white dark:text-neutral-900"
-                  : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800",
-              )}
-            >
-              {year}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <header className="space-y-2 text-center sm:space-y-3">
-        <span className="inline-flex items-center rounded-full bg-amber-600/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700 ring-1 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-200">
+        <span className="inline-flex items-center rounded-full bg-gradient-to-r from-teal-500/10 to-cyan-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-teal-700 ring-1 ring-teal-500/20 dark:from-teal-400/10 dark:to-cyan-400/10 dark:text-teal-300 dark:ring-teal-400/20">
           {t("badge")}
         </span>
-        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">
+        <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-3xl">
           {t("title")}
         </h2>
         <p className="text-sm text-neutral-600 dark:text-neutral-400 sm:text-base">
@@ -138,26 +132,62 @@ export function DayWorkerCard() {
         </p>
       </header>
 
-      {/* Hero: All-in Daily Rate */}
-      <div className="rounded-3xl bg-gradient-to-br from-amber-500 to-orange-600 px-6 py-8 text-white shadow-lg sm:px-10">
-        <p className="text-sm font-semibold uppercase tracking-wide text-amber-100">
-          {t("allInRate.label")}
-        </p>
-        <p className="mt-3 text-4xl font-bold sm:text-5xl">
-          {formatMoney(breakdown.totalWithExoneration)}
-          <span className="ml-2 text-lg font-medium text-amber-100">{t("allInRate.perDay")}</span>
-        </p>
-        <p className="mt-2 text-sm text-amber-100">
-          {t("allInRate.description", { percent: breakdown.markupPercent })}
-        </p>
-        <div className="mt-4 grid gap-3 text-sm text-amber-100 sm:grid-cols-2">
-          <div>
-            <p className="font-semibold text-white">{t("allInRate.withExoneration")}</p>
-            <p>{formatMoney(breakdown.totalWithExoneration)}</p>
+      {/* Custom Salary Input */}
+      <div className="rounded-2xl border border-teal-200 bg-gradient-to-b from-white to-teal-50/30 p-5 dark:border-teal-900 dark:from-neutral-900 dark:to-teal-950/20">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-teal-700 dark:text-teal-300">
+              {t("customWage.label")}
+            </label>
+            {isUsingCustomWage && (
+              <button
+                type="button"
+                onClick={resetToMinimum}
+                className="rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-700 transition hover:bg-teal-200 dark:bg-teal-900/30 dark:text-teal-300 dark:hover:bg-teal-900/50"
+              >
+                {t("customWage.reset")}
+              </button>
+            )}
           </div>
-          <div>
-            <p className="font-semibold text-white">{t("allInRate.withoutExoneration")}</p>
-            <p>{formatMoney(breakdown.totalWithoutExoneration)}</p>
+          <input
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            className="w-full rounded-2xl border border-teal-200 bg-white/80 px-4 py-3 text-lg font-semibold text-neutral-900 shadow-sm transition focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 dark:border-teal-800 dark:bg-neutral-900/80 dark:text-white dark:focus:border-teal-400 dark:focus:ring-teal-400/20"
+            value={formatCurrencyInput(monthlyWageInput)}
+            placeholder={formatMoney(rates.SMMLV)}
+            onChange={(e) => handleWageInputChange(e.target.value)}
+          />
+          <p className="text-xs text-teal-600 dark:text-teal-400">
+            {t("customWage.helper")}
+          </p>
+        </div>
+      </div>
+
+      {/* Hero: All-in Daily Rate */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-500 px-6 py-8 text-white shadow-xl sm:px-10">
+        {/* Subtle pattern overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+        <div className="relative">
+          <p className="text-sm font-semibold uppercase tracking-wider text-teal-100">
+            {t("allInRate.label")}
+          </p>
+          <p className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
+            {formatMoney(breakdown.totalWithExoneration)}
+            <span className="ml-2 text-lg font-medium text-teal-100">{t("allInRate.perDay")}</span>
+          </p>
+          <p className="mt-2 text-sm text-teal-100">
+            {t("allInRate.description", { percent: breakdown.markupPercent })}
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm">
+              <p className="text-xs font-semibold uppercase tracking-wide text-teal-100">{t("allInRate.withExoneration")}</p>
+              <p className="mt-1 text-xl font-bold">{formatMoney(breakdown.totalWithExoneration)}</p>
+            </div>
+            <div className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm">
+              <p className="text-xs font-semibold uppercase tracking-wide text-teal-100">{t("allInRate.withoutExoneration")}</p>
+              <p className="mt-1 text-xl font-bold">{formatMoney(breakdown.totalWithoutExoneration)}</p>
+            </div>
           </div>
         </div>
       </div>
