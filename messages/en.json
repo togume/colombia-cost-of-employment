@@ -166,6 +166,43 @@
       "whenTaken": "When taken"
     }
   },
+  "overtime": {
+    "title": "Overtime (optional)",
+    "subtitle": "Calculate additional pay for extra hours worked",
+    "hourlyRate": "Base hourly rate",
+    "perHour": "/hr",
+    "types": {
+      "extra_diurna": {
+        "label": "Daytime overtime",
+        "short": "Daytime OT",
+        "description": "Hours beyond regular shift (6am-9pm)",
+        "surcharge": "25%"
+      },
+      "extra_nocturna": {
+        "label": "Night overtime",
+        "short": "Night OT",
+        "description": "Extra hours at night (9pm-6am)",
+        "surcharge": "75%"
+      },
+      "dominical_diurna": {
+        "label": "Sunday/Holiday daytime",
+        "short": "Sunday day",
+        "description": "Overtime on Sundays or holidays (6am-9pm)",
+        "surcharge": "100%"
+      },
+      "dominical_nocturna": {
+        "label": "Sunday/Holiday night",
+        "short": "Sunday night",
+        "description": "Night overtime on Sundays or holidays (9pm-6am)",
+        "surcharge": "150%"
+      }
+    },
+    "hours": "hrs",
+    "total": "Total overtime pay",
+    "totalHours": "Total hours",
+    "grandTotal": "Salary + Overtime",
+    "empty": "Enter overtime hours to see the calculation"
+  },
   "snapshot": {
     "title": "Income snapshot",
     "subtitle": "Show the full value of the offer from the employee’s perspective.",

@@ -38,6 +38,14 @@ export interface IntegralRules {
   factor_prestacional: number;
 }
 
+export interface OvertimeRates {
+  extra_diurna: number;
+  extra_nocturna: number;
+  dominical_diurna: number;
+  dominical_nocturna: number;
+  hours_per_month: number;
+}
+
 export interface YearlyRates {
   SMMLV: number;
   aux_transporte: number;
@@ -45,6 +53,7 @@ export interface YearlyRates {
   accruals: AccrualRates;
   employee: EmployeeContributionRates;
   integral: IntegralRules;
+  overtime: OvertimeRates;
 }
 
 export const DEFAULT_YEAR: AvailableYear = DEFAULT_YEAR_VALUE;

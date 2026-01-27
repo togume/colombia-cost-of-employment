@@ -248,6 +248,43 @@
       "whenTaken": "Al tomarse"
     }
   },
+  "overtime": {
+    "title": "Horas extras (opcional)",
+    "subtitle": "Calcula el pago adicional por horas extras trabajadas",
+    "hourlyRate": "Valor hora ordinaria",
+    "perHour": "/hr",
+    "types": {
+      "extra_diurna": {
+        "label": "Hora extra diurna",
+        "short": "Extra diurna",
+        "description": "Horas adicionales en jornada diurna (6am-9pm)",
+        "surcharge": "25%"
+      },
+      "extra_nocturna": {
+        "label": "Hora extra nocturna",
+        "short": "Extra nocturna",
+        "description": "Horas adicionales en jornada nocturna (9pm-6am)",
+        "surcharge": "75%"
+      },
+      "dominical_diurna": {
+        "label": "Dominical/festivo diurna",
+        "short": "Dominical día",
+        "description": "Horas extras en domingos o festivos (6am-9pm)",
+        "surcharge": "100%"
+      },
+      "dominical_nocturna": {
+        "label": "Dominical/festivo nocturna",
+        "short": "Dominical noche",
+        "description": "Horas extras nocturnas en domingos o festivos (9pm-6am)",
+        "surcharge": "150%"
+      }
+    },
+    "hours": "hrs",
+    "total": "Total horas extras",
+    "totalHours": "Total horas",
+    "grandTotal": "Salario + Horas extras",
+    "empty": "Ingresa horas extras para ver el cálculo"
+  },
   "context": {
     "arlRate": "Tasa ARL",
     "transport": "Auxilio de transporte",

@@ -29,6 +29,13 @@
     "integral": {
       "min_smmlv": 13,
       "factor_prestacional": 0.3
+    },
+    "overtime": {
+      "extra_diurna": 1.25,
+      "extra_nocturna": 1.75,
+      "dominical_diurna": 2.00,
+      "dominical_nocturna": 2.50,
+      "hours_per_month": 240
     }
   },
   "2026": {
@@ -61,6 +68,13 @@
     "integral": {
       "min_smmlv": 13,
       "factor_prestacional": 0.3
+    },
+    "overtime": {
+      "extra_diurna": 1.25,
+      "extra_nocturna": 1.75,
+      "dominical_diurna": 2.00,
+      "dominical_nocturna": 2.50,
+      "hours_per_month": 240
     }
   }
 }

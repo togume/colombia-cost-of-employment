@@ -12,6 +12,11 @@ import {
   type CalculationResult,
 } from "@/lib/calculator";
 import { type RiskClass } from "@/lib/rates";
+import {
+  calculateOvertime,
+  getEmptyOvertimeHours,
+  type OvertimeType,
+} from "@/lib/overtime";
 import { formatCurrency, parseCurrencyInput, formatCurrencyInput } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +46,7 @@ export function CalculatorCard() {
   const validationT = useTranslations("validation");
   const integralT = useTranslations("integral");
   const contextT = useTranslations("context");
+  const overtimeT = useTranslations("overtime");
   const { locale } = useLocale();
   const { rates, subscribeToYearChange } = useYear();
 
@@ -53,6 +59,8 @@ export function CalculatorCard() {
   const [useIntegral, setUseIntegral] = useState(false);
   const [integralInput, setIntegralInput] = useState<string>("");
   const [withPensionDeduction, setWithPensionDeduction] = useState(false);
+  const [overtimeHours, setOvertimeHours] = useState<Record<OvertimeType, number>>(getEmptyOvertimeHours());
+  const [showOvertime, setShowOvertime] = useState(false);
 
   // Subscribe to year changes to update inputs
   useEffect(() => {
@@ -109,6 +117,17 @@ export function CalculatorCard() {
 
   const isValid = calculation.status === "valid";
 
+  const overtimeResult = useMemo(() => {
+    const salary = useIntegral ? (integralValue ?? 0) : (salaryValue ?? 0);
+    if (!salary || salary <= 0) return null;
+    return calculateOvertime(
+      { monthlySalary: salary, hours: overtimeHours },
+      rates
+    );
+  }, [salaryValue, integralValue, useIntegral, overtimeHours, rates]);
+
+  const hasOvertimeHours = Object.values(overtimeHours).some((h) => h > 0);
+
   const contributionMap = useMemo(() => {
     const map = new Map<ContributionId, number>();
     calculation.contributions.forEach((item) => map.set(item.id as ContributionId, item.amount));
@@ -139,6 +158,18 @@ export function CalculatorCard() {
 
   const resetToMinimumWage = () => {
     setSalaryInput(String(rates.SMMLV));
+  };
+
+  const updateOvertimeHours = (type: OvertimeType, value: string) => {
+    const numValue = parseInt(value, 10) || 0;
+    setOvertimeHours((prev) => ({
+      ...prev,
+      [type]: Math.max(0, numValue),
+    }));
+  };
+
+  const resetOvertime = () => {
+    setOvertimeHours(getEmptyOvertimeHours());
   };
 
   return (
@@ -382,6 +413,140 @@ export function CalculatorCard() {
                 : contextT("exonerationNotApplied")}
             </dd>
           </div>
+        </div>
+      )}
+
+      {/* Overtime Section */}
+      {isValid && (
+        <div className="rounded-3xl border border-orange-200 bg-gradient-to-br from-orange-50/50 to-amber-50/30 p-4 shadow-sm dark:border-orange-900 dark:from-orange-950/30 dark:to-amber-900/20 sm:p-6">
+          <button
+            type="button"
+            onClick={() => setShowOvertime(!showOvertime)}
+            className="flex w-full items-center justify-between text-left"
+          >
+            <div>
+              <h3 className="flex items-center gap-2 text-lg font-bold text-orange-900 dark:text-orange-100">
+                <span className="text-xl">⏱️</span>
+                {overtimeT("title")}
+              </h3>
+              <p className="mt-1 text-sm text-orange-700 dark:text-orange-300">
+                {overtimeT("subtitle")}
+              </p>
+            </div>
+            <span className="text-2xl font-light text-orange-600 dark:text-orange-400">
+              {showOvertime ? "−" : "+"}
+            </span>
+          </button>
+
+          {showOvertime && overtimeResult && (
+            <div className="mt-6 space-y-5">
+              {/* Hourly base rate */}
+              <div className="flex items-center justify-between rounded-2xl bg-white/60 px-4 py-3 dark:bg-orange-950/30">
+                <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                  {overtimeT("hourlyRate")}
+                </span>
+                <span className="text-lg font-bold text-orange-900 dark:text-orange-100">
+                  {formatMoney(overtimeResult.hourlyBaseRate)}
+                  <span className="ml-1 text-sm font-normal text-orange-600 dark:text-orange-400">
+                    {overtimeT("perHour")}
+                  </span>
+                </span>
+              </div>
+
+              {/* Overtime type inputs */}
+              <div className="grid gap-3 sm:grid-cols-2">
+                {(["extra_diurna", "extra_nocturna", "dominical_diurna", "dominical_nocturna"] as OvertimeType[]).map((type) => {
+                  const item = overtimeResult.breakdown.find((b) => b.type === type);
+                  return (
+                    <div
+                      key={type}
+                      className="rounded-2xl border border-orange-200 bg-white/80 p-4 dark:border-orange-800 dark:bg-orange-950/40"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-orange-900 dark:text-orange-100">
+                            {overtimeT(`types.${type}.label`)}
+                          </p>
+                          <p className="mt-0.5 text-xs text-orange-600 dark:text-orange-400">
+                            +{overtimeT(`types.${type}.surcharge`)} = {formatMoney(item?.ratePerHour ?? 0)}{overtimeT("perHour")}
+                          </p>
+                          <p className="mt-1 text-xs text-orange-500 dark:text-orange-500">
+                            {overtimeT(`types.${type}.description`)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <input
+                            type="number"
+                            min="0"
+                            className="w-16 rounded-xl border border-orange-200 bg-white px-2 py-1.5 text-center text-sm font-semibold text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200 dark:border-orange-700 dark:bg-orange-950/60 dark:text-white"
+                            value={overtimeHours[type] || ""}
+                            onChange={(e) => updateOvertimeHours(type, e.target.value)}
+                            placeholder="0"
+                          />
+                          <span className="text-xs text-orange-600 dark:text-orange-400">
+                            {overtimeT("hours")}
+                          </span>
+                        </div>
+                      </div>
+                      {item && item.hours > 0 && (
+                        <p className="mt-2 text-right text-sm font-bold text-orange-900 dark:text-orange-100">
+                          {formatMoney(item.total)}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Totals */}
+              {hasOvertimeHours && (
+                <div className="space-y-3 rounded-2xl border-2 border-orange-300 bg-gradient-to-br from-orange-100 to-amber-100/50 p-4 dark:border-orange-700 dark:from-orange-900/40 dark:to-amber-900/30">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                      {overtimeT("totalHours")}
+                    </span>
+                    <span className="font-bold text-orange-900 dark:text-orange-100">
+                      {overtimeResult.totalHours} {overtimeT("hours")}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                      {overtimeT("total")}
+                    </span>
+                    <span className="text-xl font-bold text-orange-900 dark:text-orange-100">
+                      {formatMoney(overtimeResult.totalAmount)}
+                    </span>
+                  </div>
+                  <div className="border-t border-orange-300 pt-3 dark:border-orange-700">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-orange-900 dark:text-orange-100">
+                        {overtimeT("grandTotal")}
+                      </span>
+                      <span className="text-2xl font-bold text-orange-900 dark:text-orange-100">
+                        {formatMoney(calculation.salaryBase + overtimeResult.totalAmount)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {!hasOvertimeHours && (
+                <p className="text-center text-sm text-orange-600 dark:text-orange-400">
+                  {overtimeT("empty")}
+                </p>
+              )}
+
+              {hasOvertimeHours && (
+                <button
+                  type="button"
+                  onClick={resetOvertime}
+                  className="mx-auto flex rounded-full bg-orange-100 px-4 py-2 text-xs font-semibold text-orange-700 transition hover:bg-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:hover:bg-orange-900/60"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
 

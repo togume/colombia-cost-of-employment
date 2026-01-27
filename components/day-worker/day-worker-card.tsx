@@ -6,6 +6,11 @@ import { useLocale } from "@/hooks/use-locale";
 import { useYear } from "@/hooks/use-year";
 import { getYearlyRates } from "@/lib/rates";
 import { formatCurrency, formatCurrencyInput, parseCurrencyInput } from "@/lib/format";
+import {
+  calculateOvertime,
+  getEmptyOvertimeHours,
+  type OvertimeType,
+} from "@/lib/overtime";
 
 interface DailyBreakdown {
   baseWage: number;
@@ -94,6 +99,7 @@ function calculateDailyBreakdown(
 
 export function DayWorkerCard() {
   const t = useTranslations("dayWorker");
+  const overtimeT = useTranslations("overtime");
   const { locale } = useLocale();
   const { rates } = useYear();
 
@@ -106,6 +112,30 @@ export function DayWorkerCard() {
   const isUsingCustomWage = monthlyWageValue !== null && monthlyWageValue > 0;
 
   const [showRiskAnalysis, setShowRiskAnalysis] = useState(false);
+  const [showOvertime, setShowOvertime] = useState(false);
+  const [overtimeHours, setOvertimeHours] = useState<Record<OvertimeType, number>>(getEmptyOvertimeHours());
+
+  const monthlyBase = monthlyWageValue ?? rates.SMMLV;
+  const overtimeResult = useMemo(() => {
+    return calculateOvertime(
+      { monthlySalary: monthlyBase, hours: overtimeHours },
+      rates
+    );
+  }, [monthlyBase, overtimeHours, rates]);
+
+  const hasOvertimeHours = Object.values(overtimeHours).some((h) => h > 0);
+
+  const updateOvertimeHours = (type: OvertimeType, value: string) => {
+    const numValue = parseInt(value, 10) || 0;
+    setOvertimeHours((prev) => ({
+      ...prev,
+      [type]: Math.max(0, numValue),
+    }));
+  };
+
+  const resetOvertime = () => {
+    setOvertimeHours(getEmptyOvertimeHours());
+  };
 
   const formatMoney = (value: number) => formatCurrency(value, locale, { maximumFractionDigits: 0 });
 
@@ -291,6 +321,133 @@ export function DayWorkerCard() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Overtime Section */}
+      <div className="rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50/50 to-amber-50/30 p-5 dark:border-orange-900 dark:from-orange-950/30 dark:to-amber-900/20">
+        <button
+          type="button"
+          onClick={() => setShowOvertime(!showOvertime)}
+          className="flex w-full items-center justify-between text-left"
+        >
+          <div>
+            <h3 className="flex items-center gap-2 text-lg font-semibold text-orange-900 dark:text-orange-100">
+              <span className="text-xl">⏱️</span>
+              {overtimeT("title")}
+            </h3>
+            <p className="mt-1 text-sm text-orange-700 dark:text-orange-300">
+              {overtimeT("subtitle")}
+            </p>
+          </div>
+          <span className="text-2xl font-light text-orange-600 dark:text-orange-400">
+            {showOvertime ? "−" : "+"}
+          </span>
+        </button>
+
+        {showOvertime && (
+          <div className="mt-5 space-y-4">
+            {/* Hourly base rate */}
+            <div className="flex items-center justify-between rounded-xl bg-white/60 px-4 py-3 dark:bg-orange-950/30">
+              <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                {overtimeT("hourlyRate")}
+              </span>
+              <span className="text-lg font-bold text-orange-900 dark:text-orange-100">
+                {formatMoney(overtimeResult.hourlyBaseRate)}
+                <span className="ml-1 text-sm font-normal text-orange-600 dark:text-orange-400">
+                  {overtimeT("perHour")}
+                </span>
+              </span>
+            </div>
+
+            {/* Overtime type inputs */}
+            <div className="grid gap-3 sm:grid-cols-2">
+              {(["extra_diurna", "extra_nocturna", "dominical_diurna", "dominical_nocturna"] as OvertimeType[]).map((type) => {
+                const item = overtimeResult.breakdown.find((b) => b.type === type);
+                return (
+                  <div
+                    key={type}
+                    className="rounded-xl border border-orange-200 bg-white/80 p-3 dark:border-orange-800 dark:bg-orange-950/40"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-orange-900 dark:text-orange-100">
+                          {overtimeT(`types.${type}.short`)}
+                        </p>
+                        <p className="mt-0.5 text-xs text-orange-600 dark:text-orange-400">
+                          +{overtimeT(`types.${type}.surcharge`)} = {formatMoney(item?.ratePerHour ?? 0)}{overtimeT("perHour")}
+                        </p>
+                        <p className="mt-1 text-xs text-orange-500 dark:text-orange-500">
+                          {overtimeT(`types.${type}.description`)}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <input
+                          type="number"
+                          min="0"
+                          className="w-14 rounded-lg border border-orange-200 bg-white px-2 py-1 text-center text-sm font-semibold text-neutral-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200 dark:border-orange-700 dark:bg-orange-950/60 dark:text-white"
+                          value={overtimeHours[type] || ""}
+                          onChange={(e) => updateOvertimeHours(type, e.target.value)}
+                          placeholder="0"
+                        />
+                        <span className="text-xs text-orange-600 dark:text-orange-400">
+                          {overtimeT("hours")}
+                        </span>
+                      </div>
+                    </div>
+                    {item && item.hours > 0 && (
+                      <p className="mt-2 text-right text-sm font-bold text-orange-900 dark:text-orange-100">
+                        {formatMoney(item.total)}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Totals */}
+            {hasOvertimeHours && (
+              <div className="space-y-2 rounded-xl border-2 border-orange-300 bg-gradient-to-br from-orange-100 to-amber-100/50 p-4 dark:border-orange-700 dark:from-orange-900/40 dark:to-amber-900/30">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                    {overtimeT("total")}
+                  </span>
+                  <span className="text-lg font-bold text-orange-900 dark:text-orange-100">
+                    {formatMoney(overtimeResult.totalAmount)}
+                  </span>
+                </div>
+                <div className="border-t border-orange-300 pt-2 dark:border-orange-700">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-orange-900 dark:text-orange-100">
+                      {overtimeT("grandTotal")}
+                    </span>
+                    <span className="text-xl font-bold text-orange-900 dark:text-orange-100">
+                      {formatMoney(breakdown.totalWithExoneration + overtimeResult.totalAmount)}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-orange-600 dark:text-orange-400">
+                    {t("allInRate.perDay")} + {overtimeResult.totalHours} {overtimeT("hours")}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {!hasOvertimeHours && (
+              <p className="text-center text-sm text-orange-600 dark:text-orange-400">
+                {overtimeT("empty")}
+              </p>
+            )}
+
+            {hasOvertimeHours && (
+              <button
+                type="button"
+                onClick={resetOvertime}
+                className="mx-auto flex rounded-full bg-orange-100 px-4 py-2 text-xs font-semibold text-orange-700 transition hover:bg-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:hover:bg-orange-900/60"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Legal Way Section */}
