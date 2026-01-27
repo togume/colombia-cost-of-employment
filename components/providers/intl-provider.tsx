@@ -34,9 +34,11 @@ interface LocaleContextValue {
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
-function detectInitialLocale(): SupportedLocale {
+const DEFAULT_LOCALE: SupportedLocale = "en";
+
+function detectClientLocale(): SupportedLocale {
   if (typeof window === "undefined") {
-    return "en";
+    return DEFAULT_LOCALE;
   }
 
   const stored = window.localStorage.getItem(STORAGE_KEY) as SupportedLocale | null;
@@ -49,7 +51,7 @@ function detectInitialLocale(): SupportedLocale {
     return "es";
   }
 
-  return "en";
+  return DEFAULT_LOCALE;
 }
 
 interface IntlProviderWrapperProps {
@@ -57,10 +59,17 @@ interface IntlProviderWrapperProps {
 }
 
 export function IntlProviderWrapper({ children }: IntlProviderWrapperProps) {
-  const initialLocale = detectInitialLocale();
-  const [locale, setLocaleState] = useState<SupportedLocale>(initialLocale);
-  const [messages, setMessages] = useState<Record<string, unknown>>(MESSAGES[initialLocale]);
-  const [isLoading] = useState(false);
+  const [locale, setLocaleState] = useState<SupportedLocale>(DEFAULT_LOCALE);
+  const [messages, setMessages] = useState<Record<string, unknown>>(MESSAGES[DEFAULT_LOCALE]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Detect user's preferred locale after hydration (runs once on mount)
+  useEffect(() => {
+    const detectedLocale = detectClientLocale();
+    setLocaleState(detectedLocale);
+    setMessages(MESSAGES[detectedLocale]);
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     setMessages(MESSAGES[locale]);
